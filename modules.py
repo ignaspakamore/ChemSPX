@@ -206,7 +206,6 @@ class Space():
         !upper_boundaries [lower,upper]               !
 
         """
-
         
         if self.indict["Apply_BD"] == "True":
             
