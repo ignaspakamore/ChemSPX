@@ -78,7 +78,6 @@ class Function():
             raise SystemExit
 
 
-
 class CSPX_GA(Function):
 
     def __init__(self, indict, train_data):
@@ -178,7 +177,6 @@ class CSPX_BO(Function):
                   acq_func="gp_hedge",      # the acquisition function
                   n_calls=int(self.indict['omptimisation_cycles']),         # the number of evaluations of f
                  n_random_starts=5, # the number of random initialization points
-                         # the noise level (optional)
                   random_state=1234)   # the random seed
         '''
         print (res.fun, res.x)
@@ -201,11 +199,12 @@ class Space():
     def _boudary_conditions(self, X):
 
         """
-        Correcting for boundary conditions
+            Correcting for boundary conditions
         !There might be problems with negative numbers!
         !Espetialy for GA algorithm as it expects:    !
         !lower_boundaries must be smaller than        !
         !upper_boundaries [lower,upper]               !
+
         """
 
         
