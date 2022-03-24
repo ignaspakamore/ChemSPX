@@ -21,8 +21,7 @@ class Function():
     def __init__(self, train_data, indict):
         self.train_data = train_data
         self.indict = indict
-        if self.indict['k'] != 'all':
-            self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
+        self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
 
     def _get_cos(self, idx, X):
         X = X.reshape(1, len(X))
@@ -54,17 +53,12 @@ class Function():
 
         X = np.array(X)
 
-        if self.indict['k'] != 'all':
-            dist, idx = self.tree.query(X, k=int(self.indict['k']))
-            #First distace is 0 (to itself)
-            dist = np.delete(dist, 0)
-            idx = np.delete(idx, 0)
-        else:
-            dist = np.zeros(len(self.train_data))
-            dist = sp.cdist(self.train_data, self.train_data)
-            dist = np.sort(dist[0])
-            dist = np.delete(dist, 0)
-
+       
+        dist, idx = self.tree.query(X, k=int(self.indict['k']))
+        #First distace is 0 (to itself)
+        dist = np.delete(dist, 0)
+        idx = np.delete(idx, 0)
+    
         if self.indict["f(x)"] == "Force":
             return self._get_force(dist)
 
