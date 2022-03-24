@@ -188,6 +188,7 @@ class CSPX:
         if int(self.indict["itteration_num"]) != 0:
             init_info(self.av_del_fx, self.std_fx, len(points))
 
+
         for itt in range(int(self.indict["itteration_num"])):
             start_time_loop = time.time()
             
@@ -200,7 +201,6 @@ class CSPX:
                 #generate point boundaries
                 point_bounderies = Space(self.indict)._sub_space_xi(point, self.xi)
                 
-
                 if self.indict["OPT_method"] == "GA":
                     optimised_point_dict = CSPX_GA(self.indict, self.train_data).run_GA(point_bounderies)
                     optimised_point = optimised_point_dict['variable']
@@ -282,11 +282,6 @@ class CSPX:
                  pass
                 else:
                   break
-            
-
-
-    
-
     
             
 

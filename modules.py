@@ -59,6 +59,7 @@ class Function():
     def f_x(self, X):
 
         X = np.array(X)
+        X = X.reshape((1, len(X)))
 
         dist, idx = self.tree.query(X, k=int(self.indict['k']))
         #First distace is 0 (to itself)
