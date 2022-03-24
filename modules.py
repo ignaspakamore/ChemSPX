@@ -42,44 +42,40 @@ class Function():
         return F_av
 
     def _get_radius(self, x):
-
         _xi = x*float(self.indict['xi'])
         x2 = _xi + x
         r2 = x2-x
         r = squrt(r2)
         return r
-
-    def f_x(self, X):
-
-        X = np.array(X)
-
-       
-        dist, idx = self.tree.query(X, k=int(self.indict['k']))
-        #First distace is 0 (to itself)
-        dist = np.delete(dist, 0)
-        idx = np.delete(idx, 0)
-    
-        if self.indict["f(x)"] == "Force":
-            return self._get_force(dist)
-
-        elif self.indict["f(x)"] == "COS":
-            return self._get_cos(idx,X)
-
-        elif self.indict["f(x)"] == "external":
-            #!MOVE to init if heavy function used and has no need to be trained each time called at f_X!
+    def _run_external(self, X):
             try:
                 from F import Fx
             except ImportError:
                 raise ImportError('F.py was not found in /src directory')
             f = Fx(self.indict, self.train_data)
-            result = f.f_x(X)
-        else:
+            return f.f_x(X)
+        
 
-            gfg
+    def f_x(self, X):
+
+        X = np.array(X)
+
+        dist, idx = self.tree.query(X, k=int(self.indict['k']))
+        #First distace is 0 (to itself)
+        dist = np.delete(dist, 0)
+        idx = np.delete(idx, 0)
+    
+        if self.indict["f(x)"] == "BallTree_Force":
+            return self._get_force(dist)
+
+        elif self.indict["f(x)"] == "BallTree_COS":
+            return self._get_cos(idx,X)
+
+        elif self.indict["f(x)"] == "external":
+            return self._run_external(X)
+        else:
             print('WRONG f(x) keyword!')
             raise SystemExit
-
-            return result
 
 
 
