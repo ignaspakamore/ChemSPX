@@ -25,10 +25,11 @@ class CSPX:
         '''
         self.inp = InputParser(input)
         self.indict = self.inp.get()
-        if self.indict['init_data_sampling'] != 'LHSEQ'
+        if self.indict['init_data_sampling'] != 'LHSEQ':
             with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
                 self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)
                 self.train_data = self.train_data[:, :-1]
+                self.train_size = len(self.train_data)
         self.fx1 = np.zeros(int(self.indict["sample_number"]))
         self.fx2 = np.zeros(int(self.indict["sample_number"]))
         self.av_del_fx = 0
@@ -83,6 +84,7 @@ class CSPX:
     def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)
         self.std_fx = np.std(self.fx1)
+        print_init_info(self.av_del_fx, self.std_fx, len(self.fx1))
 
     def _get_stats(self): 
         self.del_fx = (self.fx2 - self.fx1)**2
@@ -132,8 +134,6 @@ class CSPX:
                 self.indict['random_seed'] = int((self.indict['random_seed']))
             sampling = LHS(xlimits=variable_bounderies, random_state=self.indict['random_seed'])
             points = sampling(int(self.indict["sample_number"]))
-            self.train_data = points
-            self._optimisation_loop()
 
         elif self.indict["init_data_sampling"] == 'void':
             #VOID exploration algorithm
@@ -148,17 +148,29 @@ class CSPX:
 
         #If True: does not combine points with reference data, hence f(x) is calculated only to the respect to ref data
         #and not generated sample points allowing to map function. 
-        if self.indict['map_function'] == 'False':
+        if self.indict['map_function'] == 'False' and self.indict['init_data_sampling'] != 'LHSEQ':
             self.train_data = np.vstack((self.train_data, points))
+        else:
+            self.train_data = points
+
         self._get_initial_fx(points)
 
+        #Write initial data out: 
+        if self.indict['write_initial'] == 'True':
+            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
+        if self.indict['write_initial'] == 'True':    
+            np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
+
     def _optimisation_loop(self):
-        train_size = len(self.train_data)
+        if self.indict['init_data_sampling'] == 'LHSEQ':
+            self.train_size = 0
+
         for itt in range(int(self.indict["itteration_num"])):
             start_time_loop = time.time()
-            
+
             for ix in range(int(self.indict['sample_number'])):
-                point_idx = ix + train_size
+                point_idx = ix + self.train_size
+                print(self.train_data)
                 point = self.train_data[point_idx]
                 
                 #print(np.where(self.train_data == point))
@@ -191,7 +203,6 @@ class CSPX:
 
 
                 self.fx2[ix] = f_x
-                points[ix] = optimised_point
                 self.train_data[point_idx] = optimised_point
 
             self._get_stats()
@@ -215,7 +226,7 @@ class CSPX:
             self.fx2 = np.zeros(int(self.indict["sample_number"]))
             
             if (itt+1) % int(self.indict['write_f_every']) == 0:
-                np.savetxt(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv', points, delimiter=",")
+                np.savetxt(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv', self.train_data[self.train_size:len(self.train_data)], delimiter=",")
                 #PCA reduction
                 if self.indict['PCA'] == 'True':
                     PCA(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv').reduce()
@@ -247,7 +258,6 @@ class CSPX:
                   break
 
 
-
     def run(self):
         """
         1. Take sample point or FULL space boundaries 
@@ -273,19 +283,7 @@ class CSPX:
         os.makedirs(self.indict["out_dir"])
 
         self._initial_sampling()
-
         self._get_initial_stats()
-
-        #Write initial data out: 
-        if self.indict['write_initial'] == 'True':
-            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
-        if self.indict['write_initial'] == 'True':    
-            np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
-
-        #Calculate initial f(x) and STD for samples
-        if int(self.indict["itteration_num"]) != 0:
-            init_info(self.av_del_fx, self.std_fx, len(points))
-
         self._optimisation_loop()
       
 

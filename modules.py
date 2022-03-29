@@ -63,6 +63,8 @@ class Function():
 
         dist, idx = self.tree.query(X, k=int(self.indict['k']))
         #First distace is 0 (to itself)
+        dist = np.sort(dist)
+        idx = np.sort(idx)
         dist = np.delete(dist, 0)
         idx = np.delete(idx, 0)
     

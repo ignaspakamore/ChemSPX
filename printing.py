@@ -38,7 +38,7 @@ def print_loop_info(step, mean_fx, mean_derr_fx, av_vect_change, loop_time, meth
 	elif step % int(print_every) == 0:
 		print("{:<8d}{:<15e}{:>10e}{:>16e}{:>15f}".format(step, mean_fx, mean_derr_fx,av_vect_change, loop_time))
 
-def init_info( mean_fx, std_fx, pop_size):
+def print_init_info( mean_fx, std_fx, pop_size):
 	
 	print(f"""INITIAL DATA""")
 	print(f"""{30*"-"}""")
