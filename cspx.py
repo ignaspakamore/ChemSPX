@@ -25,9 +25,10 @@ class CSPX:
         '''
         self.inp = InputParser(input)
         self.indict = self.inp.get()
-        with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
-            self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)
-            self.train_data = self.train_data[:, :-1]
+        if self.indict['init_data_sampling'] != 'LHSEQ'
+            with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
+                self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)
+                self.train_data = self.train_data[:, :-1]
         self.fx1 = np.zeros(int(self.indict["sample_number"]))
         self.fx2 = np.zeros(int(self.indict["sample_number"]))
         self.av_del_fx = 0
@@ -119,13 +120,20 @@ class CSPX:
     def _initial_sampling(self):
         if self.indict["init_data_sampling"] == 'LHS':
             variable_bounderies = self._get_space_var()
-
             #Latin hypercube sampling
             if self.indict['random_seed'] != None:
                 self.indict['random_seed'] = int((self.indict['random_seed']))
-
             sampling = LHS(xlimits=variable_bounderies, random_state=self.indict['random_seed'])
             points = sampling(int(self.indict["sample_number"]))
+        elif self.indict["init_data_sampling"] == 'LHSEQ':
+            variable_bounderies = self._get_space_var()
+            #Latin hypercube sampling
+            if self.indict['random_seed'] != None:
+                self.indict['random_seed'] = int((self.indict['random_seed']))
+            sampling = LHS(xlimits=variable_bounderies, random_state=self.indict['random_seed'])
+            points = sampling(int(self.indict["sample_number"]))
+            self.train_data = points
+            self._optimisation_loop()
 
         elif self.indict["init_data_sampling"] == 'void':
             #VOID exploration algorithm
@@ -246,8 +254,7 @@ class CSPX:
 
         2. Generate random sample points within the boundaries of xi or full_space (Latin hypercube method)
 
-        3. Itterate through the points and optimise them with GA or ls
-         method using xi 
+        3. Itterate through the points and optimise them with GA or ls or BO method using xi 
         """
 
         program_start = time.time()
@@ -280,9 +287,7 @@ class CSPX:
             init_info(self.av_del_fx, self.std_fx, len(points))
 
         self._optimisation_loop()
-
-    
-            
+      
 
 if __name__ == "__main__":
     start_time = time.time()
