@@ -79,7 +79,7 @@ class CSPX:
             pool.join()
 
 
-    def _get_stats_initial(self):
+    def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)
         self.std_fx = np.std(self.fx1)
 
@@ -116,36 +116,7 @@ class CSPX:
             return 0
         else:
             return 1
-
-
-    def run(self):
-        """
-        1. Take sample point or FULL space boundaries 
-
-        2. Generate random sample points within the boundaries of xi or full_space (Latin hypercube method)
-
-        3. Itterate through the points and optimise them with GA or ls
-         method using xi 
-        """
-
-        program_start = time.time()
-
-        print_logo()
-        if int(self.indict['n_processes']) != -1:
-            print(f'Number of processes set to {self.indict["n_processes"]}.')
-        else:
-            print(f'Number of processes set to (-1) {os.cpu_count()}.')
-
-        if self.indict["print_parameters"] == "True":
-            print_pars(self.indict)
-        
-        if os.path.exists(self.indict["out_dir"]):
-            shutil.rmtree(self.indict["out_dir"])
-        os.makedirs(self.indict["out_dir"])
-
-        train_size = len(self.train_data)
-
-
+    def _initial_sampling(self):
         if self.indict["init_data_sampling"] == 'LHS':
             variable_bounderies = self._get_space_var()
 
@@ -171,24 +142,10 @@ class CSPX:
         #and not generated sample points allowing to map function. 
         if self.indict['map_function'] == 'False':
             self.train_data = np.vstack((self.train_data, points))
-            
-
-       
         self._get_initial_fx(points)
-        self._get_stats_initial()
 
-        #INITIAL DATA!!!! 
-
-        if self.indict['write_initial'] == 'True':
-            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
-        if self.indict['write_initial'] == 'True':    
-            np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
-
-        #Calculate initial f(x) and STD for samples
-        if int(self.indict["itteration_num"]) != 0:
-            init_info(self.av_del_fx, self.std_fx, len(points))
-
-
+    def _optimisation_loop(self):
+        train_size = len(self.train_data)
         for itt in range(int(self.indict["itteration_num"])):
             start_time_loop = time.time()
             
@@ -238,10 +195,8 @@ class CSPX:
             loop_time = end_time_loop - start_time_loop 
 
             #Calculation of the derrivative of f(x)
-
             self.der_fx2= self.av_del_fx
             der_fx = self.der_fx1 - self.der_fx2
-             
             self.der_fx1 = self.der_fx2
 
             if itt == 0:
@@ -282,6 +237,50 @@ class CSPX:
                  pass
                 else:
                   break
+
+
+
+    def run(self):
+        """
+        1. Take sample point or FULL space boundaries 
+
+        2. Generate random sample points within the boundaries of xi or full_space (Latin hypercube method)
+
+        3. Itterate through the points and optimise them with GA or ls
+         method using xi 
+        """
+
+        program_start = time.time()
+
+        print_logo()
+        if int(self.indict['n_processes']) != -1:
+            print(f'Number of processes set to {self.indict["n_processes"]}.')
+        else:
+            print(f'Number of processes set to (-1) {os.cpu_count()}.')
+
+        if self.indict["print_parameters"] == "True":
+            print_pars(self.indict)
+        
+        if os.path.exists(self.indict["out_dir"]):
+            shutil.rmtree(self.indict["out_dir"])
+        os.makedirs(self.indict["out_dir"])
+
+        self._initial_sampling()
+
+        self._get_initial_stats()
+
+        #Write initial data out: 
+        if self.indict['write_initial'] == 'True':
+            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
+        if self.indict['write_initial'] == 'True':    
+            np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
+
+        #Calculate initial f(x) and STD for samples
+        if int(self.indict["itteration_num"]) != 0:
+            init_info(self.av_del_fx, self.std_fx, len(points))
+
+        self._optimisation_loop()
+
     
             
 
