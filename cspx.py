@@ -170,7 +170,6 @@ class CSPX:
 
             for ix in range(int(self.indict['sample_number'])):
                 point_idx = ix + self.train_size
-                print(self.train_data)
                 point = self.train_data[point_idx]
                 
                 #print(np.where(self.train_data == point))

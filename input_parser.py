@@ -19,7 +19,6 @@ class InputParser:
 		'n_processes':1,
 		'write_f_every':1,
 		'split_value':0.1,
-		'charge': 1,
 		'GA_iterations':80,
 		'max_iteration_without_improv':50,
 		'print_every': 5,

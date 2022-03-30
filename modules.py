@@ -36,8 +36,7 @@ class Function():
         F = k q1q2/r^2
         charge = q1q2 
         '''
-        charge = float(self.indict['charge'])
-        F = charge/(dist**2)
+        F = 1/dist
         F_av = np.average(F)
         return F_av
 
