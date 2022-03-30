@@ -26,7 +26,8 @@ class InputParser:
 		'map_function': 'False',
 		'random_seed': None,
 		'check_conv_every': 10,
-		'PCA': 'False'}
+		'PCA': 'False',
+		'power': 1}
 
 	def _check_indict(self):
 

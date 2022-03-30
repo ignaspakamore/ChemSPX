@@ -36,7 +36,8 @@ class Function():
         F = k q1q2/r^2
         charge = q1q2 
         '''
-        F = 1/dist
+        power = float(self.indict[power])
+        F = 1/dist**power
         F_av = np.average(F)
         return F_av
 
@@ -171,21 +172,12 @@ class CSPX_BO(Function):
             if variable_boundaries[i][1] == variable_boundaries[i][0]:
                 variable_boundaries[i][1] = variable_boundaries[i][1] + 1e-10
         bounds = []
+        
         for i, j in enumerate(variable_boundaries):
             bounds.append((variable_boundaries[i][0], variable_boundaries[i][1]))
         
-        res = gp_minimize(self.f_x,                  # the function to minimize
-                  bounds,      # the bounds on each dimension of x
-                  acq_func="gp_hedge",      # the acquisition function
-                  n_calls=int(self.indict['omptimisation_cycles']),         # the number of evaluations of f
-                 n_random_starts=5, # the number of random initialization points
-                  random_state=1234)   # the random seed
-        '''
-        print (res.fun, res.x)
-        with open('reg_info.txt', 'w') as f:
-            f.write(str(res))
-            f.close()
-        '''
+        res = gp_minimize(self.f_x, bounds, acq_func="gp_hedge", n_calls=int(self.indict['omptimisation_cycles']), n_random_starts=5)
+
         return res.x, res.fun
 
 class Space():
