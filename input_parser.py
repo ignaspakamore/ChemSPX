@@ -59,7 +59,7 @@ class InputParser:
 			if key not in self.dict:
 				self.dict[key] = value
 
-	def get(self):
+	def get(self) -> dict:
 
 		f = open(self.input, 'r')
 
@@ -74,18 +74,6 @@ class InputParser:
 
 		self._check_indict()
 		return self.dict
-
-class GenInput(InputParser):
-	def __init__(self):
-		pass
-
-	def gen_input_file(slef):
-
-		parameters = {
-		'#': 'CSPX INPUT FILE #',
-
-		}
-
 
 
 

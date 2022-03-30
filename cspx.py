@@ -12,8 +12,6 @@ from input_parser import InputParser
 import math
 from smt.sampling_methods import LHS
 from multiprocessing import Pool
-
-
     
 
 class CSPX:
