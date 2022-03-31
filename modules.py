@@ -183,7 +183,7 @@ class CSPX_BO(Function):
         for i, j in enumerate(variable_boundaries):
             bounds.append((variable_boundaries[i][0], variable_boundaries[i][1]))
         
-        res = gp_minimize(self.f_x, bounds, acq_func="gp_hedge", n_calls=int(self.indict['omptimisation_cycles']), n_random_starts=5)
+        res = gp_minimize(self.f_x, bounds, acq_func="gp_hedge", n_calls=int(self.indict['omptimisation_cycles']), n_random_starts=5, random_state=None)
 
         return res.x, res.fun
 
