@@ -59,19 +59,26 @@ class Function():
     def f_x(self, X):
 
         X = np.array(X)
-        X = X.reshape((1, len(X)))
-
-        dist, idx = self.tree.query(X, k=int(self.indict['k']))
-        #First distace is 0 (to itself)
-        dist = np.sort(dist)
-        idx = np.sort(idx)
-        dist = np.delete(dist, 0)
-        idx = np.delete(idx, 0)
+        
     
         if self.indict["f(x)"] == "BallTree_Force":
+            X = X.reshape((1, len(X)))
+            dist, idx = self.tree.query(X, k=int(self.indict['k']))
+            #First distace is 0 (to itself)
+            dist = np.sort(dist)
+            idx = np.sort(idx)
+            dist = np.delete(dist, 0)
+            idx = np.delete(idx, 0)
             return self._get_force(dist)
 
         elif self.indict["f(x)"] == "BallTree_COS":
+            X = X.reshape((1, len(X)))
+            dist, idx = self.tree.query(X, k=int(self.indict['k']))
+            #First distace is 0 (to itself)
+            dist = np.sort(dist)
+            idx = np.sort(idx)
+            dist = np.delete(dist, 0)
+            idx = np.delete(idx, 0)
             return self._get_cos(idx,X)
 
         elif self.indict["f(x)"] == "external":
@@ -172,7 +179,7 @@ class CSPX_BO(Function):
             if variable_boundaries[i][1] == variable_boundaries[i][0]:
                 variable_boundaries[i][1] = variable_boundaries[i][1] + 1e-10
         bounds = []
-        
+
         for i, j in enumerate(variable_boundaries):
             bounds.append((variable_boundaries[i][0], variable_boundaries[i][1]))
         
@@ -185,8 +192,9 @@ class Space():
     def __init__(self, indict):
 
         self.indict = indict
-        with open(indict['in_file'], 'r', encoding='utf-8-sig') as f:
-            self.data = np.genfromtxt(f, delimiter=',', dtype=float)
+        if self.indict['init_data_sampling'] != 'LHSEQ':
+            with open(indict['in_file'], 'r', encoding='utf-8-sig') as f:
+                self.data = np.genfromtxt(f, delimiter=',', dtype=float)
         self.max_bound = np.fromstring(self.indict["UBL"], sep=',')
         self.min_bound = np.fromstring(self.indict["LBL"], sep=',')
 

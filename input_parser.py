@@ -36,7 +36,7 @@ class InputParser:
 		and if not default values are inserted.
 		'''
 
-		important = ['in_file',
+		important = [
 				'OPT_method',
 				'Apply_BD',
 				'UBL',
@@ -45,8 +45,7 @@ class InputParser:
 				'itteration_num',
 				'method',
 				'xi',
-				'f(x)',
-				'k']
+				'f(x)']
 		
 		try:
 			for key in important:
