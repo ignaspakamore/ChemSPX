@@ -36,8 +36,7 @@ class Function():
         F = k q1q2/r^2
         charge = q1q2 
         '''
-        power = float(self.indict[power])
-        F = 1/dist**power
+        F = 1/(dist**float(self.indict['power']))
         F_av = np.average(F)
         return F_av
 
