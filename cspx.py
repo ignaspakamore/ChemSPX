@@ -87,7 +87,8 @@ class CSPX:
         for i in range(ndim):
             grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
         meshgrid = []
-        meshgrid.append(np.meshgrid(*(grid[i] for i in range(ndim))))
+        print((np.meshgrid(*(grid[i] for i in range(ndim)))))
+        
         
 
 
@@ -174,7 +175,7 @@ class CSPX:
             self.train_data = np.vstack((self.train_data, points))
         else:
             self.train_data = points
-            self._eval_fx_distribution()
+            #self._eval_fx_distribution()
 
         self._get_initial_fx(points)
 
