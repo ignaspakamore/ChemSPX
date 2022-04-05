@@ -41,6 +41,8 @@ class CSPX:
         self.xi_init = float(self.indict['xi'])
         self.step = int(self.indict['sample_number'])
         self.vect_change = np.zeros(int(self.indict["sample_number"]))
+        self.max_bound = np.fromstring(self.indict["UBL"], sep=',')
+        self.min_bound = np.fromstring(self.indict["LBL"], sep=',')
 
     def _get_space_var(self):
         """
@@ -77,6 +79,28 @@ class CSPX:
                 self.fx1[i]=results[i]
             pool.close()
             pool.join()
+
+    def _eval_fx_distribution(self):
+        ndim = len(self.train_data[0])
+
+        grid = {}
+        for i in range(ndim):
+            grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
+        meshgrid = []
+        meshgrid.append(np.meshgrid(*(grid[i] for i in range(ndim))))
+        
+
+
+        result = np.zeros(int(self.indict['map_grid_size']))
+        for i in range(int(self.indict['map_grid_size'])):
+            x = []
+            for j in range(ndim):
+                x.append(meshgrid[i][j][1][1])
+          
+                result[i] = Function(self.train_data, self.indict).f_x(x)
+        f = open(f'{self.indict["out_dir"]}/fx_map.csv', 'a')
+        np.savetxt(f, result, delimiter=",", fmt="%s")
+        f.close()
 
 
     def _get_initial_stats(self):
@@ -150,6 +174,7 @@ class CSPX:
             self.train_data = np.vstack((self.train_data, points))
         else:
             self.train_data = points
+            self._eval_fx_distribution()
 
         self._get_initial_fx(points)
 
@@ -158,6 +183,7 @@ class CSPX:
             np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
         if self.indict['write_initial'] == 'True':    
             np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
+
 
     def _optimisation_loop(self):
         if self.indict['init_data_sampling'] == 'LHSEQ':
