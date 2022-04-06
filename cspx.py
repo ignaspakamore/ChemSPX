@@ -12,7 +12,7 @@ from input_parser import InputParser
 import math
 from smt.sampling_methods import LHS
 from multiprocessing import Pool
-    
+import pickle 
 
 class CSPX:
     def __init__(self, input):
@@ -86,21 +86,28 @@ class CSPX:
         grid = {}
         for i in range(ndim):
             grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
-        meshgrid = []
-        print((np.meshgrid(*(grid[i] for i in range(ndim)))))
+
+        
+        grid = np.meshgrid(*(grid[i] for i in range(ndim)))
+        points = np.stack(((grid[i] for i in range(ndim))), axis = -1)
         
         
+        #points = np.vstack(map(np.ravel, grid)).T
+        #print (points)
+      
 
+    
+        result = np.zeros(len(points))
 
-        result = np.zeros(int(self.indict['map_grid_size']))
-        for i in range(int(self.indict['map_grid_size'])):
-            x = []
-            for j in range(ndim):
-                x.append(meshgrid[i][j][1][1])
-          
-                result[i] = Function(self.train_data, self.indict).f_x(x)
+        for i, x in enumerate(points):
+            result[i] = Function(self.train_data, self.indict).f_x(x)
+
         f = open(f'{self.indict["out_dir"]}/fx_map.csv', 'a')
         np.savetxt(f, result, delimiter=",", fmt="%s")
+        f.close()
+
+        with open(f'{self.indict["out_dir"]}/meshgrid.pkl', 'wb') as f:
+            pickle.dump(points, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
 
@@ -114,7 +121,8 @@ class CSPX:
         self.av_del_fx  = np.average(self.del_fx)
         self.std_fx = np.std(self.del_fx)
 
-    def _get_vect_change(self, x1, x2):
+    def _get_vect_change(self, x1
+        , x2):
         #x1 = x1/np.linalg.norm(x1)
         #x2 = x2/np.linalg.norm(x2)
 
@@ -173,9 +181,14 @@ class CSPX:
         #and not generated sample points allowing to map function. 
         if self.indict['map_function'] == 'False' and self.indict['init_data_sampling'] != 'LHSEQ':
             self.train_data = np.vstack((self.train_data, points))
-        else:
+        
+        elif self.indict['init_data_sampling'] == 'LHSEQ':
             self.train_data = points
-            #self._eval_fx_distribution()
+
+        elif self.indict['map_function'] == 'True':
+            self._eval_fx_distribution()
+        else:
+            raise SystemExit
 
         self._get_initial_fx(points)
 
