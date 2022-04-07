@@ -13,6 +13,7 @@ import math
 from smt.sampling_methods import LHS
 from multiprocessing import Pool
 import pickle 
+from sklearn.neighbors import BallTree
 
 class CSPX:
     def __init__(self, input):
@@ -95,9 +96,13 @@ class CSPX:
         
     
         result = np.zeros(len(points))
+        if self.indict['map_type'] == 'force':
+            for i, x in enumerate(points):
+                result[i] = Function(self.train_data, self.indict).f_x(x)
+        elif self.indict['map_type'] == 'density':
+            tree = BallTree(self.train_data)                
+            result = tree.kernel_density(points, h=0.1, kernel='gaussian')
 
-        for i, x in enumerate(points):
-            result[i] = Function(self.train_data, self.indict).f_x(x)
 
 
         result = np.array_split(result, len(grid[0][1]))
