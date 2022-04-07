@@ -1,4 +1,3 @@
-import PySimpleGUI as sg
 import pandas as pd
 import numpy as np
 from pca import PCA
@@ -25,7 +24,7 @@ class PCAGUI():
 			data = pd.read_excle(file)
 
 		self.data_type= data['Type']
-		
+		self.data_type_colour= data['Colour']		
 
 	def plot2D(self):
 		pass
@@ -33,9 +32,8 @@ class PCAGUI():
 		pass
 
 	def reduce(self):
-		pass
-
-
+		pca = PCA(n_components=self.n_componenets)
+		PincipalComponents = pca.fit_transform(self.data)
 
 	def run(self):
 
