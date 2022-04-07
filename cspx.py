@@ -88,27 +88,30 @@ class CSPX:
             grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
 
         
-        grid = np.meshgrid(*(grid[i] for i in range(ndim)))
-        points = np.stack(((grid[i] for i in range(ndim))), axis = -1)
+        grid = np.array(np.meshgrid(*[grid[i] for i in range(ndim)]))
+        points = np.stack(([grid[i] for i in range(ndim)]), axis = -1)
         
+        points = np.vstack([*map(np.ravel, grid)]).T
         
-        #points = np.vstack(map(np.ravel, grid)).T
-        #print (points)
-      
-
     
         result = np.zeros(len(points))
 
         for i, x in enumerate(points):
             result[i] = Function(self.train_data, self.indict).f_x(x)
 
+
+        result = np.array_split(result, len(grid[0][1]))
+        
+
         f = open(f'{self.indict["out_dir"]}/fx_map.csv', 'a')
         np.savetxt(f, result, delimiter=",", fmt="%s")
         f.close()
 
         with open(f'{self.indict["out_dir"]}/meshgrid.pkl', 'wb') as f:
-            pickle.dump(points, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
+
+        
 
 
     def _get_initial_stats(self):
