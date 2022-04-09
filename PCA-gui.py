@@ -22,19 +22,26 @@ class PCAGUI():
 		except IOError:
 			self.data = pd.read_excel(self.file_dir)
 
-		try:	
-			data_type= self.data['Type']
-			data_type_colour= self.data['Colour']
-			for tpe, clr in zip(data_type, data_type_colour):
-				self.colour[tpe] = data_type_colour
-			self.data = self.data.drop('Type', 1)
-			self.data = self.data.drop('Colour', 1)
+		if 'Type' in self.data:
 
-		except:
-			pass		
+			data_type= self.data['Type']
+
+			if 'Colour' in self.data:
+				data_type_colour= self.data['Colour']
+				for idx, tpe in enumerate(data_type):
+					self.colour[tpe] = data_type_colour[idx]
+				self.data = self.data.drop('Colour', 1)
+			else:
+				data_type_colour = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
+
+			self.data = self.data.drop('Type', 1)
+		else:
+			pass
+
+				
 
 	def plot2D(self):
-		plt.scatter(self.PincipalComponents.T[0], self.PincipalComponents.T[1])
+		plt.scatter(self.PincipalComponents.T[0], self.PincipalComponents.T[1], c=self.colour)
 		plt.show()
 	def plot3D(self):
 		pass
@@ -80,7 +87,7 @@ class PCAGUI():
 
 				self.get_data()
 				print (self.colour)
-				#self.reduce()
+				self.reduce()
 
 				output.update('FINISHED √')
 				
