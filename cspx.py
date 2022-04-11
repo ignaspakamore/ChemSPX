@@ -108,11 +108,11 @@ class CSPX:
         result = np.array_split(result, len(grid[0][1]))
         
 
-        f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict['map_type']}.csv', 'a')
+        f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
         np.savetxt(f, result, delimiter=",", fmt="%s")
         f.close()
 
-        with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict['map_type']}.pkl', 'wb') as f:
+        with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict["map_type"]}.pkl', 'wb') as f:
             pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
