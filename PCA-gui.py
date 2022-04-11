@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 from sklearn.decomposition import PCA
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 
 class PCAGUI():
@@ -14,6 +15,7 @@ class PCAGUI():
 		self.data = None
 		self.colour = {}
 		self.PincipalComponents = None
+		self.data_type = None
 
 
 	def get_data(self):
@@ -24,11 +26,11 @@ class PCAGUI():
 
 		if 'Type' in self.data:
 
-			data_type= self.data['Type']
+			self.data_type = self.data['Type']
 
 			if 'Colour' in self.data:
 				data_type_colour= self.data['Colour']
-				for idx, tpe in enumerate(data_type):
+				for idx, tpe in enumerate(self.data_type):
 					self.colour[tpe] = data_type_colour[idx]
 				self.data = self.data.drop('Colour', 1)
 			else:
@@ -38,10 +40,16 @@ class PCAGUI():
 		else:
 			pass
 
-				
 
 	def plot2D(self):
-		plt.scatter(self.PincipalComponents.T[0], self.PincipalComponents.T[1], c=self.colour)
+		self.PincipalComponents = self.PincipalComponents.T
+		plt.scatter(self.PincipalComponents[0], self.PincipalComponents[1], color=[self.colour[r] for r in self.data_type])
+		lables = []
+	
+		for key, val  in self.colour.items():
+			lables.append(mpatches.Patch(color=f'{val}', label=f'{key}'))
+		
+		plt.legend(handles=lables)
 		plt.show()
 	def plot3D(self):
 		pass
@@ -59,15 +67,15 @@ class PCAGUI():
 		# All the stuff inside your window.
 		output = sg.Text()
 		layout = [
-					[sg.Text('Data file'), sg.InputText()],
+					[sg.Text('Data file'), sg.In(size=(35,1), enable_events=True), sg.FolderBrowse()],
 					[sg.Text('Number of components')],
-					[sg.Checkbox('2',size = (4,2)), sg.Checkbox('3',size = (4,2)), sg.Text('other:'), sg.InputText()],
+					[sg.Checkbox('2',size = (4,2)), sg.Checkbox('3',size = (4,2)), sg.Text('other:'), sg.InputText(size=(3,1))],
 					[sg.Button('Calculate'),sg.Button('PLOT'), sg.Button('SAVE')],
 					[output]]
 		
 
 		# Create the Window
-		window = sg.Window('CSPX PCA-GUI', layout, size=(350, 150), font=30, finalize=True)
+		window = sg.Window('CSPX PCA-GUI', layout, size=(500, 200), font=30, finalize=True)
 		# Event Loop to process "events" and get the "values" of the inputs
 
 		while True:

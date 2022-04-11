@@ -12,7 +12,7 @@ import math
 from smt.sampling_methods import LHS
 from printing import *
 from skopt import gp_minimize
-from scipy.spatial import distance as sp
+from scipy.spatial.distance import cdist
 
 
 
@@ -21,7 +21,8 @@ class Function():
     def __init__(self, train_data, indict):
         self.train_data = train_data
         self.indict = indict
-        self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
+        if self.indict["f(x)"] == "BallTree_COS" or self.indict["f(x)"] == "BallTree_Force":
+            self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
 
     def _get_cos(self, idx, X):
         X = X.reshape(1, len(X))
@@ -32,9 +33,9 @@ class Function():
         return cos_av
     def _get_force(self, dist):
         '''
+        Calculates average force experienced by point at position X
         COULOMB's LAW:
-        F = k q1q2/r^2
-        charge = q1q2 
+        F =  q1q2/r^N
         '''
         F = 1/(dist**float(self.indict['power']))
         F_av = np.average(F)
@@ -69,6 +70,14 @@ class Function():
             dist = np.delete(dist, 0)
             idx = np.delete(idx, 0)
             return self._get_force(dist)
+
+        elif self.indict["f(x)"] == "Force":
+            X = X.reshape((1, len(X)))
+            dist = cdist(X, self.train_data)
+            dist = np.sort(dist)
+            dist = np.delete(dist, 0)
+            return self._get_force(dist)
+
 
         elif self.indict["f(x)"] == "BallTree_COS":
             X = X.reshape((1, len(X)))
