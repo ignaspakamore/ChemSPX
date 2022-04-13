@@ -16,14 +16,20 @@ class PCAGUI():
 		self.colour = {}
 		self.PincipalComponents = None
 		self.data_type = None
+		self.ERROR = ''
+		self.anotate = False
 
+
+	def open_file(self):
+	
+		if self.file_dir.endswith('.csv'):
+			self.data = pd.read_csv(self.file_dir)
+		elif self.file_dir.endswith('.xlsx' ):
+			self.data = pd.read_excel(self.file_dir)
+		else:
+			self.ERROR = 'WRONG FILE FORMAT'
 
 	def get_data(self):
-		try:
-			self.data = pd.read_csv(self.file_dir)
-		except IOError:
-			self.data = pd.read_excel(self.file_dir)
-
 		if 'Type' in self.data:
 
 			self.data_type = self.data['Type']
@@ -50,9 +56,21 @@ class PCAGUI():
 			lables.append(mpatches.Patch(color=f'{val}', label=f'{key}'))
 		
 		plt.legend(handles=lables)
+
+		if self.anotate == True:
+			for x,y,label in zip(self.PincipalComponents[0],self.PincipalComponents[1], self.data_type):
+
+				plt.annotate(label, (x,y), textcoords="offset points", xytext=(0,10), ha='center') 
+				
 		plt.show()
 	def plot3D(self):
-		pass
+		fig = plt.figure(figsize=(4,4))
+
+		ax = fig.add_subplot(111, projection='3d')
+
+		ax.scatter(self.PincipalComponents[0], self.PincipalComponents[1], self.PincipalComponents[2]) # plot the point (2,3,4) on the figure
+
+		plt.show()
 
 	def reduce(self):
 		pca = PCA(n_components=self.n_componenets)
@@ -60,22 +78,23 @@ class PCAGUI():
 
 	def run(self):
 
-		sg.theme('Default')   # Add a touch of color
+		sg.theme('DefaultNoMoreNagging')   # Add a touch of color
 		
 
 
 		# All the stuff inside your window.
 		output = sg.Text()
 		layout = [
-					[sg.Text('Data file'), sg.In(size=(35,1), enable_events=True), sg.FolderBrowse()],
+					[sg.Text('Data file'), sg.In(size=(35,1), enable_events=True), sg.FileBrowse()],
 					[sg.Text('Number of components')],
 					[sg.Checkbox('2',size = (4,2)), sg.Checkbox('3',size = (4,2)), sg.Text('other:'), sg.InputText(size=(3,1))],
+					[sg.Checkbox('Anotate samples',size = (20,2))],
 					[sg.Button('Calculate'),sg.Button('PLOT'), sg.Button('SAVE')],
 					[output]]
 		
 
 		# Create the Window
-		window = sg.Window('CSPX PCA-GUI', layout, size=(500, 200), font=30, finalize=True)
+		window = sg.Window('CSPX PCA-GUI', layout, size=(600, 300), font=30, finalize=True)
 		# Event Loop to process "events" and get the "values" of the inputs
 
 		while True:
@@ -93,21 +112,30 @@ class PCAGUI():
 				elif values[3] != '':
 					self.n_componenets = int(values[3])
 
-				self.get_data()
-				print (self.colour)
-				self.reduce()
+				self.open_file()
+				output.update(self.ERROR)
 
-				output.update('FINISHED √')
-				
+				if self.ERROR == '':
+					self.get_data()
+					self.reduce()
+					output.update('FINISHED √')
+				self.ERROR = ''
 				
 			elif event == 'PLOT':
-				self.plot2D()
+				if values[4] == True:
+					self.anotate = True
+				if self.n_componenets == 2:
+					self.plot2D()
+				elif self.n_componenets == 3:
+					self.plot3D()
+				else:
+					output.update('PCA must be calculated first')
+				self.anotate = False
+
 			elif event == 'SAVE':
 				pass
 			elif event == sg.WIN_CLOSED:  # if user closes window or clicks cancel
 				break
-
-
 
 
 		window.close()
