@@ -91,7 +91,6 @@ class PCAGUI():
 					[sg.Checkbox('Anotate samples',size = (20,2))],
 					[sg.Button('Calculate'),sg.Button('PLOT'), sg.Button('SAVE')],
 					[output]]
-		
 
 		# Create the Window
 		window = sg.Window('CSPX PCA-GUI', layout, size=(600, 300), font=30, finalize=True)
