@@ -88,7 +88,7 @@ class CSPX:
         for i in range(ndim):
             grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
 
-        
+    
         grid = np.array(np.meshgrid(*[grid[i] for i in range(ndim)]))
         points = np.stack(([grid[i] for i in range(ndim)]), axis = -1)
         

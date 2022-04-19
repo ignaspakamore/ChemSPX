@@ -78,6 +78,7 @@ class PCAGUI():
 		for key, val  in self.colour.items():
 			lables.append(mpatches.Patch(color=f'{val}', label=f'{key}'))
 
+
 		plt.legend(handles=lables)
 
 		plt.show()
