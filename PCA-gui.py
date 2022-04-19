@@ -41,6 +41,8 @@ class PCAGUI():
 				self.data = self.data.drop('Colour', 1)
 			else:
 				data_type_colour = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
+				for i in range(self.data_type.nunique()):
+					self.colour[self.data_type.unique()[i]] = data_type_colour[i]
 
 			self.data = self.data.drop('Type', 1)
 		else:
@@ -48,8 +50,8 @@ class PCAGUI():
 
 
 	def plot2D(self):
-		self.PincipalComponents = self.PincipalComponents.T
-		plt.scatter(self.PincipalComponents[0], self.PincipalComponents[1], color=[self.colour[r] for r in self.data_type])
+		
+		plt.scatter(self.PincipalComponents[:,0], self.PincipalComponents[:,1], color=[self.colour[r] for r in self.data_type])
 		lables = []
 	
 		for key, val  in self.colour.items():
@@ -64,11 +66,19 @@ class PCAGUI():
 				
 		plt.show()
 	def plot3D(self):
-		fig = plt.figure(figsize=(4,4))
+		fig = plt.figure(figsize=(10, 10))
 
 		ax = fig.add_subplot(111, projection='3d')
 
-		ax.scatter(self.PincipalComponents[0], self.PincipalComponents[1], self.PincipalComponents[2]) # plot the point (2,3,4) on the figure
+		ax.scatter(self.PincipalComponents[:,0], self.PincipalComponents[:,1], self.PincipalComponents[:,2], 
+			color=[self.colour[r] for r in self.data_type]) 
+
+		lables = []
+	
+		for key, val  in self.colour.items():
+			lables.append(mpatches.Patch(color=f'{val}', label=f'{key}'))
+
+		plt.legend(handles=lables)
 
 		plt.show()
 
@@ -120,6 +130,7 @@ class PCAGUI():
 					self.reduce()
 					output.update('FINISHED √')
 				self.ERROR = ''
+
 				
 			elif event == 'PLOT':
 				if values[4] == True:
