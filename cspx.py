@@ -14,6 +14,7 @@ from smt.sampling_methods import LHS
 from multiprocessing import Pool
 import pickle 
 from sklearn.neighbors import BallTree
+from sklearn.decomposition import PCA
 
 class CSPX:
     def __init__(self, input):
@@ -42,8 +43,8 @@ class CSPX:
         self.xi_init = float(self.indict['xi'])
         self.step = int(self.indict['sample_number'])
         self.vect_change = np.zeros(int(self.indict["sample_number"]))
-        self.max_bound = np.fromstring(self.indict["UBL"], sep=',')
-        self.min_bound = np.fromstring(self.indict["LBL"], sep=',')
+        self.max_bound = [float(x) for x in np.fromstring(self.indict["UBL"], sep=',')]
+        self.min_bound = [float(x) for x in np.fromstring(self.indict["LBL"], sep=',')]
 
     def _get_space_var(self):
         """
@@ -81,33 +82,50 @@ class CSPX:
             pool.close()
             pool.join()
 
+    def pca(self, x):
+        pca = PCA(n_components=2)
+
+        principalComponents = pca.fit_transform(x)
+
+        return principalComponents
+
     def _eval_fx_distribution(self):
         ndim = len(self.train_data[0])
 
-        grid = {}
-        for i in range(ndim):
-            grid[i] = np.linspace(float(self.min_bound[i]), float(self.max_bound[i]), int(self.indict['map_grid_size']))
+        if ndim > 2:
+            data = self.pca(self.train_data)
+            min_bound = []
+            max_bound = []
+            for i in range(2):
+                min_bound.append(min(data[i]))
+                max_bound.append(max(data[i]))
 
-    
-        grid = np.array(np.meshgrid(*[grid[i] for i in range(ndim)]))
-        points = np.stack(([grid[i] for i in range(ndim)]), axis = -1)
+        elif ndim == 2:
+            min_bound = self.min_bound
+            max_bound = self.max_bound
+            data = self.train_data
+
+        grid = {}
+        for i in range(2):
+            grid[i] = np.linspace(min_bound[i], max_bound[i], int(self.indict['map_grid_size']))
+
+        
+        grid = np.array(np.meshgrid(*[grid[i] for i in range(2)]))
+        points = np.stack(([grid[i] for i in range(2)]), axis = -1)
         
         points = np.vstack([*map(np.ravel, grid)]).T
+
         
-    
         result = np.zeros(len(points))
         if self.indict['map_type'] == 'force':
             for i, x in enumerate(points):
-                result[i] = Function(self.train_data, self.indict).f_x(x)
+                result[i] = Function(data, self.indict).f_x(x)
         elif self.indict['map_type'] == 'density':
-            tree = BallTree(self.train_data)                
+            tree = BallTree(data)                
             result = tree.kernel_density(points, h=0.1, kernel='gaussian')
-
-
 
         result = np.array_split(result, len(grid[0][1]))
         
-
         f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
         np.savetxt(f, result, delimiter=",", fmt="%s")
         f.close()
@@ -116,8 +134,7 @@ class CSPX:
             pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
-        
-
+    
 
     def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)
