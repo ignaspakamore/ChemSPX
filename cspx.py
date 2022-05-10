@@ -93,6 +93,7 @@ class CSPX:
         ndim = len(self.train_data[0])
 
         if ndim > 2:
+            dim = 'PCA'
             data = self.pca(self.train_data)
             min_bound = []
             max_bound = []
@@ -101,6 +102,7 @@ class CSPX:
                 max_bound.append(max(data[i]))
 
         elif ndim == 2:
+            dim = None
             min_bound = self.min_bound
             max_bound = self.max_bound
             data = self.train_data
@@ -133,13 +135,21 @@ class CSPX:
         with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict["map_type"]}.pkl', 'wb') as f:
             pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
+        print(f""" 
+Function distribution calculated
+------------------------------------
+Method: {self.indict['map_type']}
+Dimention reduction: {dim}
+Grid side: {self.indict['map_grid_size']}
+""")
 
     
 
     def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)
         self.std_fx = np.std(self.fx1)
-        print_init_info(self.av_del_fx, self.std_fx, len(self.fx1))
+        if self.indict['map_function'] == 'False':
+            print_init_info(self.av_del_fx, self.std_fx, len(self.fx1))
 
     def _get_stats(self): 
         self.del_fx = (self.fx2 - self.fx1)**2
@@ -332,9 +342,9 @@ class CSPX:
         program_start = time.time()
 
         print_logo()
-        if int(self.indict['n_processes']) != -1:
+        if int(self.indict['n_processes']) != -1 and int(self.indict['n_processes']) != 1:
             print(f'Number of processes set to {self.indict["n_processes"]}.')
-        else:
+        elif int(self.indict['n_processes']) == -1:
             print(f'Number of processes set to (-1) {os.cpu_count()}.')
 
         if self.indict["print_parameters"] == "True":
