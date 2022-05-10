@@ -45,6 +45,9 @@ class CSPX:
         self.vect_change = np.zeros(int(self.indict["sample_number"]))
         self.max_bound = [float(x) for x in np.fromstring(self.indict["UBL"], sep=',')]
         self.min_bound = [float(x) for x in np.fromstring(self.indict["LBL"], sep=',')]
+        if self.indict['k'] == 'all':
+            self.indict['k'] == self.train_size
+
 
     def _get_space_var(self):
         """
@@ -124,7 +127,7 @@ class CSPX:
                 result[i] = Function(data, self.indict).f_x(x)
         elif self.indict['map_type'] == 'density':
             tree = BallTree(data)                
-            result = tree.kernel_density(points, h=0.1, kernel='gaussian')
+            result = tree.kernel_density(points, h=float(self.indict['h']), kernel='gaussian')
 
         result = np.array_split(result, len(grid[0][1]))
         
@@ -142,8 +145,6 @@ Method: {self.indict['map_type']}
 Dimention reduction: {dim}
 Grid side: {self.indict['map_grid_size']}
 """)
-
-    
 
     def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)

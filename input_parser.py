@@ -27,7 +27,9 @@ class InputParser:
 		'random_seed': None,
 		'check_conv_every': 10,
 		'PCA': 'False',
-		'power': 1}
+		'power': 1, 
+		'k': 1,
+		'h': 0.1}
 
 	def _check_indict(self):
 
@@ -73,6 +75,7 @@ class InputParser:
 					self.dict[key] = val
 
 		self._check_indict()
+
 		return self.dict
 
 
