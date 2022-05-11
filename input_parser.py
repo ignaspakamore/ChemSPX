@@ -28,7 +28,7 @@ class InputParser:
 		'check_conv_every': 10,
 		'PCA': 'False',
 		'power': 1, 
-		'k': 1,
+		'k': 'all',
 		'h': 0.1}
 
 	def _check_indict(self):
