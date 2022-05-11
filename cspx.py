@@ -15,6 +15,7 @@ from multiprocessing import Pool
 import pickle 
 from sklearn.neighbors import BallTree
 from sklearn.decomposition import PCA
+import pandas as pd
 
 class CSPX:
     def __init__(self, input):
@@ -89,8 +90,9 @@ class CSPX:
         pca = PCA(n_components=2)
 
         principalComponents = pca.fit_transform(x)
+        principalDf = pd.DataFrame(data = principalComponents)
 
-        return principalComponents
+        return principalDf
 
     def _eval_fx_distribution(self):
         ndim = len(self.train_data[0])
