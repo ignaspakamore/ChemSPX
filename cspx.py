@@ -97,7 +97,10 @@ class CSPX:
     def _eval_fx_distribution(self):
         ndim = len(self.train_data[0])
 
-        if ndim > 2:
+        if self.indict['map_type'] == 'SP_hist':
+            data = self.train_data
+
+        elif ndim > 2:
             dim = 'PCA'
             data = self.pca(self.train_data)
             min_bound = []
@@ -112,41 +115,50 @@ class CSPX:
             max_bound = self.max_bound
             data = self.train_data
 
-        grid = {}
-        for i in range(2):
-            grid[i] = np.linspace(min_bound[i], max_bound[i], int(self.indict['map_grid_size']))
+        if self.indict['map_type'] != 'SP_hist':
+            grid = {}
+            for i in range(2):
+                grid[i] = np.linspace(min_bound[i], max_bound[i], int(self.indict['map_grid_size']))
 
-        
-        grid = np.array(np.meshgrid(*[grid[i] for i in range(2)]))
-        points = np.stack(([grid[i] for i in range(2)]), axis = -1)
-        
-        points = np.vstack([*map(np.ravel, grid)]).T
+            
+            grid = np.array(np.meshgrid(*[grid[i] for i in range(2)]))
+            points = np.stack(([grid[i] for i in range(2)]), axis = -1)
+            
+            points = np.vstack([*map(np.ravel, grid)]).T
 
-        
-        result = np.zeros(len(points))
+            
+            result = np.zeros(len(points))
+
         if self.indict['map_type'] == 'force':
             for i, x in enumerate(points):
                 result[i] = Function(data, self.indict).f_x(x)
         elif self.indict['map_type'] == 'density':
             tree = BallTree(data)                
             result = tree.kernel_density(points, h=float(self.indict['h']), kernel='gaussian')
+        elif self.indict['map_type'] == 'SP_hist':
+            result_hist = np.zeros(len(data))
+            for i, x in enumerate(data):
+             result_hist[i] = Function(data, self.indict).f_x(x)
+            f = open(f'{self.indict["out_dir"]}/fx_SP_hist.csv', 'a')
+            np.savetxt(f, result_hist, delimiter=",", fmt="%s")
+            f.close()
 
-        result = np.array_split(result, len(grid[0][1]))
-        
-        f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
-        np.savetxt(f, result, delimiter=",", fmt="%s")
-        f.close()
+            
+        if self.indict['map_type'] != 'SP_hist':
+            result = np.array_split(result, len(grid[0][1]))
+            
+            f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
+            np.savetxt(f, result, delimiter=",", fmt="%s")
+            f.close()
 
-        with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict["map_type"]}.pkl', 'wb') as f:
-            pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
-        f.close()
-        print(f""" 
-Function distribution calculated
+            with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict["map_type"]}.pkl', 'wb') as f:
+                pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
+            f.close()
+
+        print(f"""
 ------------------------------------
-Method: {self.indict['map_type']}
-Dimention reduction: {dim}
-Grid side: {self.indict['map_grid_size']}
-""")
+**Function distribution calculated**
+------------------------------------""")
 
     def _get_initial_stats(self):
         self.av_del_fx  = np.average(self.fx1)
