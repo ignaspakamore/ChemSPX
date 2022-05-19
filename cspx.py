@@ -232,8 +232,7 @@ Grid side: {self.indict['map_grid_size']}
 
         #Write initial data out: 
         if self.indict['write_initial'] == 'True':
-            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")
-        if self.indict['write_initial'] == 'True':    
+            np.savetxt(f"{self.indict['out_dir']}/initial_points.csv", points, delimiter=",")   
             np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
 
 
