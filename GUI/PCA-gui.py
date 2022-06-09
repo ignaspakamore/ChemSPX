@@ -32,22 +32,22 @@ class PCAGUI():
 
 	def get_data(self):
 		if 'Type' in self.data:
-
+			self.data_type = self.data['Type']
+		else:
+			self.data['Type'] = 'Data'
 			self.data_type = self.data['Type']
 
-			if 'Colour' in self.data:
-				data_type_colour= self.data['Colour']
-				for idx, tpe in enumerate(self.data_type):
-					self.colour[tpe] = data_type_colour[idx]
-				self.data = self.data.drop('Colour', 1)
-			else:
-				data_type_colour = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
-				for i in range(self.data_type.nunique()):
-					self.colour[self.data_type.unique()[i]] = data_type_colour[i]
-
-			self.data = self.data.drop('Type', 1)
+		if 'Colour' in self.data:
+			data_type_colour= self.data['Colour']
+			for idx, tpe in enumerate(self.data_type):
+				self.colour[tpe] = data_type_colour[idx]
+			self.data = self.data.drop('Colour', 1)
 		else:
-			pass
+			data_type_colour = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black', 'white']
+			for i in range(self.data_type.nunique()):
+				self.colour[self.data_type.unique()[i]] = data_type_colour[i]
+
+		self.data = self.data.drop('Type', 1)
 
 
 	def plot2D(self):
@@ -192,7 +192,7 @@ class PCAGUI():
 				if self.ERROR == '':
 					self.get_data()
 					self.reduce()
-					output.update('FINISHED √')
+					output.update('PCA calculated')
 				self.ERROR = ''
 
 				
