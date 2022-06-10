@@ -168,7 +168,7 @@ class PCAGUI():
 					[sg.Button('Calculate'),sg.Button('PLOT'), sg.Button('SAVE')],
 					[output]]
 		# Create the Window
-		window = sg.Window('CSPX PCA-GUI', layout, size=(600, 300), font=30, finalize=True)
+		window = sg.Window('CSPX PCA-GUI', layout, size=(600, 200), font=30, finalize=True)
 		# Event Loop to process "events" and get the "values" of the inputs
 
 		while True:
@@ -192,7 +192,7 @@ class PCAGUI():
 				if self.ERROR == '':
 					self.get_data()
 					self.reduce()
-					output.update('PCA calculated')
+					output.update(f'{self.n_componenets} component PCA calculated')
 				self.ERROR = ''
 
 				
