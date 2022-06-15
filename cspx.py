@@ -1,4 +1,5 @@
 from modules import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
+from ploop import PLoop
 from pca import PCA
 from printing import *
 from datetime import datetime
@@ -46,8 +47,8 @@ class CSPX:
         self.vect_change = np.zeros(int(self.indict["sample_number"]))
         self.max_bound = [float(x) for x in np.fromstring(self.indict["UBL"], sep=',')]
         self.min_bound = [float(x) for x in np.fromstring(self.indict["LBL"], sep=',')]
-        if self.indict['k'] == 'all':
-            self.indict['k'] == self.train_size
+        if self.indict['k'] != 'all':
+            self.train_size = float(self.indict['k'])
 
 
     def _get_space_var(self):
@@ -368,9 +369,10 @@ class CSPX:
             shutil.rmtree(self.indict["out_dir"])
         os.makedirs(self.indict["out_dir"])
 
-        self._initial_sampling()
-        self._get_initial_stats()
-        self._optimisation_loop()
+        #self._initial_sampling()
+        #self._get_initial_stats()
+        #self._optimisation_loop()
+        PLoop(self.indict)._divide_space()
       
 
 if __name__ == "__main__":
