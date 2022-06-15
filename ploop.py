@@ -9,7 +9,12 @@ class PLoop():
 	def __init__(self, indict):
 		self.indict = indict
 		self.n_processes = 3
-		self.resolution = 1+self.n_processes
+		self.resolution = 1+self.n_processe
+		self.ppool = []
+
+	def _gen_cp_of_space():
+		for i in range(self.n_processes):
+			ppool.append(np.copy(self.train_data))
 
 	def _gen_array(self, max_val, min_val):
 		array = np.zeros(self.resolution)
@@ -60,7 +65,7 @@ class PLoop():
 		return split_axes		
 
 
-	def _box(self):
+	def _group(self):
 		pass
 
 	def run(self):
