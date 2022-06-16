@@ -10,11 +10,11 @@ class PLoop():
 		self.indict = indict
 		self.n_processes = 3
 		self.resolution = 1+self.n_processe
-		self.ppool = []
+		self.pspool = []
 
 	def _gen_cp_of_space():
 		for i in range(self.n_processes):
-			ppool.append(np.copy(self.train_data))
+			pspool.append(np.copy(self.train_data))
 
 	def _gen_array(self, max_val, min_val):
 		array = np.zeros(self.resolution)
