@@ -20,7 +20,6 @@ import pandas as pd
 
 class CSPX:
     def __init__(self, input):
-
         '''
         Training data np.array() is kept in list[]. Array of index 0 is used, then new computed array is appended as idx 1.
         The old array is then deleted, 1 becomes 0 and the loop continues...
@@ -369,10 +368,10 @@ class CSPX:
             shutil.rmtree(self.indict["out_dir"])
         os.makedirs(self.indict["out_dir"])
 
-        #self._initial_sampling()
-        #self._get_initial_stats()
+        self._initial_sampling()
+        self._get_initial_stats()
         #self._optimisation_loop()
-        PLoop(self.indict)._divide_space()
+        PLoop(self.indict, self.train_data).run()
       
 
 if __name__ == "__main__":
