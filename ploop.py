@@ -4,10 +4,9 @@ from sklearn.neighbors import BallTree
 from multiprocessing import Pool
 import time
 from modules import Space
-from cspx import CSXP
 
 
-class PLoop(CSPX):
+class PLoop():
 	"""docstring for PLoop"""
 	def __init__(self, indict, train_data):
 		self.indict = indict
@@ -88,8 +87,11 @@ class PLoop(CSPX):
 					self.pspool[box] = np.append(self.pspool[box], point)
 				else:
 					pass
+
 	def _main_loop(self):
 
+		fx1 = np.zeros(int(self.indict["sample_number"]))
+		fx2 = np.zeros(int(self.indict["sample_number"]))
 
 		for itt in range(int(self.indict["itteration_num"])):
 			start_time_loop = time.time()
@@ -122,66 +124,9 @@ class PLoop(CSPX):
 					print('WRONG optimisation method specified!')
 					break
 
-				x1 = point #x1 and x2 for vector diff.
-				x2 = optimised_point
-				self.vect_change[ix] = self._get_vect_change(x1, x2)
-
-
-				self.fx2[ix] = f_x
 				self.train_data[point_idx] = optimised_point
-
-			self._get_stats()
-			#ccf - coordinate change factor
-			self.ccf = np.average(self.vect_change)
-			self.av_fx = np.average(self.fx1)
-
-			end_time_loop = time.time()
-			loop_time = end_time_loop - start_time_loop 
-
-			#Calculation of the derrivative of f(x)
-			self.der_fx2= self.av_del_fx
-			der_fx = self.der_fx1 - self.der_fx2
-			self.der_fx1 = self.der_fx2
-
-			if itt == 0:
-				der_fx = 0
-
-			print_loop_info(itt+1, self.av_fx, self.av_del_fx, self.ccf, loop_time, self.indict["OPT_method"], self.indict["print_every"])
-			self.fx1 = self.fx2
-			self.fx2 = np.zeros(int(self.indict["sample_number"]))
+				self.fx2[ix] = f_x
 			
-			if (itt+1) % int(self.indict['write_f_every']) == 0:
-				np.savetxt(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv', self.train_data[self.train_size:len(self.train_data)], delimiter=",")
-				#PCA reduction
-				if self.indict['PCA'] == 'True':
-					PCA(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv').reduce()
-
-			#Writes out stats data:
-			#Average derrivative of f(x), average of f(x), 2nd derrivative of average of f(x), std of average f(x), and loop time
-			#---------------------------  ---------------  ---------------   ----------------  -------------------      ---------
-
-			if itt == 0:
-				fx_header = np.array([['itteration','average of f(x)', 'Average derrivative of f(x)', '2nd derrivative of average of f(x)', 'std of average f(x)',
-				'average CCC','loop time']])
-				fx_data = np.array([[itt+1, self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.ccf, loop_time]])
-
-				f = open(f'{self.indict["out_dir"]}/fx_data.csv', 'a')
-				np.savetxt(f, fx_header, delimiter=",", fmt="%s")
-				np.savetxt(f, fx_data, delimiter=",")
-				f.close()
-
-			else:
-				fx_data = np.array([[itt+1,self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.ccf, loop_time]])
-				f = open(f'{self.indict["out_dir"]}/fx_data.csv', 'a')
-				np.savetxt(f, fx_data, delimiter=",")
-				f.close()
-			if (itt+1) % int(self.indict['check_conv_every']) == 0:
-				convergence = self._check_convergence()
-				if convergence != 0:
-				 pass
-				else:
-				  break
-
 
 	def _run_in_paralel(self):
 		pass
