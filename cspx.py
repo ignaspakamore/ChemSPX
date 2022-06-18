@@ -376,8 +376,8 @@ class Program(CSPX):
 
 		self._initial_sampling()
 		self._get_initial_stats()
-		#self._optimisation_loop()
-		PLoop(self.indict, self.train_data).run()
+		self._optimisation_loop()
+		#PLoop(self.indict, self.train_data).run()
 		
 
 	
