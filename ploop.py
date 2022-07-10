@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.neighbors import BallTree
 #from printing import print_ploop
-from multiprocessing import Pool
+import multiprocessing
 import time
-from modules import Space
+from modules import Space, CSPX_BO, CSPX_GA, CSPX_GRID
 
 
 class PLoop():
@@ -21,6 +21,7 @@ class PLoop():
 	def _gen_cp_of_space(self):
 		for i in range(self.n_processes):
 			self.pspool.append(np.copy(self.train_data[0:self.last_train_data_index]))
+
 
 	def _gen_array(self, max_val, min_val):
 		array = np.zeros(self.resolution)
@@ -73,8 +74,7 @@ class PLoop():
 	def _group(self):
 
 		'''
-		Creates a pool of n replicated train_data
-		and asigns generated data points for optimisation
+		Asigns generated data points to box for optimisation
 		'''
 
 		points = self.train_data[self.last_train_data_index:]
@@ -89,58 +89,88 @@ class PLoop():
 						accept.append(False)
 
 				if all(accept) == True:
-					self.pspool[box] = np.append(self.pspool[box], point)
+					
+					self.pspool[box] = np.append(self.pspool[box], point.reshape(1, 2), axis=0)
+
 				else:
 					pass
+	def _get_vect_change(self, x1, x2):
+		#x1 = x1/np.linalg.norm(x1)
+		#x2 = x2/np.linalg.norm(x2)
 
-	def _main_loop(self):
+		delX = np.subtract(x1, x2)
+		vect_mag = np.linalg.norm(delX)
 
-		fx1 = np.zeros(int(self.indict["sample_number"]))
-		fx2 = np.zeros(int(self.indict["sample_number"]))
+		return vect_mag
 
-		for itt in range(int(self.indict["itteration_num"])):
-			start_time_loop = time.time()
 
-			for ix in range(int(self.indict['sample_number'])):
-				point_idx = ix + self.last_train_data_index +1
-				point = self.train_data[point_idx]
+	def _main_loop(self, index):
+
+		data = self.pspool[index]
+
+		sample_number = len(data) - self.last_train_data_index
+
+		vect_change = np.zeros(sample_number)
+		fx = np.zeros(sample_number)
+	
+		for ix in range(sample_number):
+			point_idx = ix + self.last_train_data_index 
+			point = data[point_idx]
+						
+			point_bounderies = Space(self.indict)._sub_space_xi(point, self.xi)
 				
-				#print(np.where(self.train_data == point))
+			if self.indict["OPT_method"] == "GA":
+				optimised_point_dict = CSPX_GA(self.indict, self.train_data).run_GA(point_bounderies)
+				optimised_point = optimised_point_dict['variable']
+				f_x = optimised_point_dict['function']
 
-				#generate point boundaries
-				point_bounderies = Space(self.indict)._sub_space_xi(point, self.xi)
-				
-				if self.indict["OPT_method"] == "GA":
-					optimised_point_dict = CSPX_GA(self.indict, self.train_data).run_GA(point_bounderies)
-					optimised_point = optimised_point_dict['variable']
-					f_x = optimised_point_dict['function']
+			elif self.indict["OPT_method"] == "GRID":
+				optimised = CSPX_GRID(self.indict, self.train_data).run_cspx_grid(point_bounderies)
+				optimised_point = optimised[0]
+				f_x = optimised[1]
 
-				elif self.indict["OPT_method"] == "GRID":
-					optimised = CSPX_GRID(self.indict, self.train_data).run_cspx_grid(point_bounderies)
-					optimised_point = optimised[0]
-					f_x = optimised[1]
-
-				elif self.indict["OPT_method"] == "BO":
-					optimised = CSPX_BO(self.indict, self.train_data).run_bayassian(point_bounderies)
-					optimised_point = optimised[0]
-					f_x = optimised[1]
+			elif self.indict["OPT_method"] == "BO":
+				optimised = CSPX_BO(self.indict, self.train_data).run_bayassian(point_bounderies)
+				optimised_point = optimised[0]
+				f_x = optimised[1]
 					
-				else:
-					print('WRONG optimisation method specified!')
-					break
+			else:
+				print('WRONG optimisation method specified!')
+				break
+			x1 = point #x1 and x2 for vector diff.
+			x2 = optimised_point
+			vect_change[ix] = self._get_vect_change(x1, x2)
 
-				self.train_data[point_idx] = optimised_point
-				self.fx2[ix] = f_x
-			
+			data[point_idx] = optimised_point
+
+			fx[ix] = f_x
+
+		#Statistics
+		#del_fx = (fx2 - fx1)**2
+		#av_del_fx  = np.average(del_fx)
+		#std_fx = np.std(del_fx)
+		#ccf - coordinate change factor
+		#ccf = np.average(vect_change)
+		#av_fx = np.average(fx1)
+
+	
+		return [fx,  vect_change, data]
+
 
 	def _run_in_paralel(self):
-		pass
+		pool = multiprocessing.Pool()
+		print (pool.map(self._main_loop, range(self.n_processes)))
+
 					
 	def run(self):
 		self._gen_cp_of_space()
 		self._divide_space()
 		self._group()
-		print (self.pspool)
+		self._run_in_paralel()
+
+		
+
+	
 		
 
 

@@ -182,8 +182,7 @@ class CSPX:
 		self.av_del_fx  = np.average(self.del_fx)
 		self.std_fx = np.std(self.del_fx)
 
-	def _get_vect_change(self, x1
-		, x2):
+	def _get_vect_change(self, x1, x2):
 		#x1 = x1/np.linalg.norm(x1)
 		#x2 = x2/np.linalg.norm(x2)
 
