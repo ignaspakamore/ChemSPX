@@ -30,6 +30,26 @@ class PCAGUI():
 		else:
 			self.ERROR = 'WRONG FILE FORMAT'
 
+	def check_null(self):
+
+		error = 'INPUT COLUMNS HAVE *NAN* VALUES:\n'
+		stats = {}
+		for column in self.data:
+			stats[column] = 0
+
+		for column in self.data:
+			if self.data[column].isnull().sum() != 0:
+				stats[column] = self.data[column].isnull().sum()
+
+		for key, value in stats.items():
+				if value > 0:
+					error = error+key+"\n"
+
+		for key, val in stats.items():
+				if val > 0:
+					self.ERROR = error
+
+
 	def get_data(self):
 		if 'Type' in self.data:
 			self.data_type = self.data['Type']
@@ -48,6 +68,8 @@ class PCAGUI():
 				self.colour[self.data_type.unique()[i]] = data_type_colour[i]
 
 		self.data = self.data.drop('Type', 1)
+		self.check_null()
+
 
 
 	def plot2D(self):
@@ -191,6 +213,10 @@ class PCAGUI():
 
 				if self.ERROR == '':
 					self.get_data()
+					output.update(self.ERROR)
+	
+
+				if self.ERROR == '':
 					self.reduce()
 					output.update(f'{self.n_componenets} component PCA calculated')
 				self.ERROR = ''

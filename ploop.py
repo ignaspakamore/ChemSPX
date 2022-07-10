@@ -72,6 +72,11 @@ class PLoop():
 
 	def _group(self):
 
+		'''
+		Creates a pool of n replicated train_data
+		and asigns generated data points for optimisation
+		'''
+
 		points = self.train_data[self.last_train_data_index:]
 
 		for point in points:
@@ -135,6 +140,7 @@ class PLoop():
 		self._gen_cp_of_space()
 		self._divide_space()
 		self._group()
+		print (self.pspool)
 		
 
 

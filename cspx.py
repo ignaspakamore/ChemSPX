@@ -94,7 +94,9 @@ class CSPX:
 
 		return principalDf
 
-	def _eval_fx_distribution(self):
+	def _eval_fx_distribution(self, points):
+
+		'''
 		ndim = len(self.train_data[0])
 
 		if self.indict['map_type'] == 'SP_hist':
@@ -129,12 +131,20 @@ class CSPX:
 			
 			result = np.zeros(len(points))
 
+
 		if self.indict['map_type'] == 'force':
 			for i, x in enumerate(points):
 				result[i] = Function(data, self.indict).f_x(x)
-		elif self.indict['map_type'] == 'density':
-			tree = BallTree(data)                
-			result = tree.kernel_density(points, h=float(self.indict['h']), kernel='gaussian')
+		'''
+
+		if self.indict['map_type'] == 'density':
+			tree = BallTree(self.train_data)                
+			result = tree.kernel_density(self.train_data, h=float(self.indict['h']), kernel='gaussian')
+			f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
+			np.savetxt(f, result, delimiter=",", fmt="%s")
+			f.close()
+
+		'''
 		elif self.indict['map_type'] == 'SP_hist':
 			result_hist = np.zeros(len(data))
 			for i, x in enumerate(data):
@@ -159,6 +169,7 @@ class CSPX:
 ------------------------------------
 **Function distribution calculated**
 ------------------------------------""")
+'''
 
 	def _get_initial_stats(self):
 		self.av_del_fx  = np.average(self.fx1)
@@ -236,7 +247,7 @@ class CSPX:
 			self.train_data = points
 
 		elif self.indict['map_function'] == 'True':
-			self._eval_fx_distribution()
+			self._eval_fx_distribution(points)
 		else:
 			raise SystemExit
 
@@ -376,8 +387,8 @@ class Program(CSPX):
 
 		self._initial_sampling()
 		self._get_initial_stats()
-		self._optimisation_loop()
-		#PLoop(self.indict, self.train_data).run()
+		#self._optimisation_loop()
+		PLoop(self.indict, self.train_data).run()
 		
 
 	

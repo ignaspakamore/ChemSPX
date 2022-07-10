@@ -71,6 +71,17 @@ class Function():
             idx = np.delete(idx, 0)
             return self._get_force(dist)
 
+        elif self.indict["f(x)"] == "BallTree_rho":
+            X = X.reshape((1, len(X)))
+            dist, idx = self.tree.query(X, k=int(self.indict['k']))
+            #First distace is 0 (to itself)
+            dist = np.sort(dist)
+            idx = np.sort(idx)
+            dist = np.delete(dist, 0)
+            idx = np.delete(idx, 0)
+            return self._get_force(dist)
+
+
         elif self.indict["f(x)"] == "Force":
             X = X.reshape((1, len(X)))
             dist = cdist(X, self.train_data)
