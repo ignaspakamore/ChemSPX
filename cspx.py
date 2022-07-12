@@ -17,6 +17,7 @@ import pickle
 from sklearn.neighbors import BallTree
 from sklearn.decomposition import PCA
 import pandas as pd
+from scipy import stats
 
 class CSPX:
 	def __init__(self, input):
@@ -66,8 +67,7 @@ class CSPX:
 
 	def _get_initial_fx(self, points):
 		if int(self.indict['n_processes']) == 1:
-			for i in range(len(points)):
-				point = points[i]
+			for i, point in enumerate(points):
 				fx = Function(self.train_data, self.indict).f_x(point)
 				self.fx1[i] = fx
 		elif int(self.indict['n_processes']) > 1:
@@ -135,16 +135,7 @@ class CSPX:
 		if self.indict['map_type'] == 'force':
 			for i, x in enumerate(points):
 				result[i] = Function(data, self.indict).f_x(x)
-		'''
-
-		if self.indict['map_type'] == 'density':
-			tree = BallTree(self.train_data)                
-			result = tree.kernel_density(self.train_data, h=float(self.indict['h']), kernel='gaussian')
-			f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
-			np.savetxt(f, result, delimiter=",", fmt="%s")
-			f.close()
-
-		'''
+	
 		elif self.indict['map_type'] == 'SP_hist':
 			result_hist = np.zeros(len(data))
 			for i, x in enumerate(data):
@@ -164,12 +155,44 @@ class CSPX:
 			with open(f'{self.indict["out_dir"]}/meshgrid_{self.indict["map_type"]}.pkl', 'wb') as f:
 				pickle.dump(grid, f, protocol=pickle.HIGHEST_PROTOCOL)
 			f.close()
+		'''
+		
+
+		if self.indict['map_type'] == 'density':
+			tree = BallTree(self.train_data)                
+			rho = tree.kernel_density(self.train_data, h=float(self.indict['h']), kernel='gaussian')
+
+			density = stats.gaussian_kde(rho)
+			x_vals = np.linspace(min(rho), max(rho), len(rho)) 
+
+			#density.covariance_factor = lambda : .5
+			#density._compute_covariance()
+
+			
+			result = np.c_[x_vals, density(x_vals)]
+
+
+		elif self.indict['map_type'] == 'force':
+			sampling = LHS(xlimits=self._get_space_var(), random_state=self.indict['random_seed'])
+			points = sampling(int(self.indict["map_grid_size"]))
+
+			fx = np.zeros(len(points))
+			for i, point in enumerate(points):
+				fx[i] = Function(self.train_data, self.indict).f_x(point)
+			density = stats.gaussian_kde(fx)
+			x_vals = np.linspace(min(fx), max(fx), len(fx))
+			result = np.c_[x_vals, density(x_vals)]
+
+		f = open(f'{self.indict["out_dir"]}/fx_map_{self.indict["map_type"]}.csv', 'a')
+		np.savetxt(f, result, delimiter=",", fmt="%s")
+		f.close()
+
 
 		print(f"""
 ------------------------------------
 **Function distribution calculated**
 ------------------------------------""")
-'''
+
 
 	def _get_initial_stats(self):
 		self.av_del_fx  = np.average(self.fx1)
@@ -386,8 +409,8 @@ class Program(CSPX):
 
 		self._initial_sampling()
 		self._get_initial_stats()
-		#self._optimisation_loop()
-		PLoop(self.indict, self.train_data).run()
+		self._optimisation_loop()
+		#PLoop(self.indict, self.train_data).run()
 		
 
 	
