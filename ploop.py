@@ -159,7 +159,7 @@ class PLoop():
 
 	def _run_in_paralel(self):
 		pool = multiprocessing.Pool()
-		print (pool.map(self._main_loop, range(self.n_processes)))
+		pool.map(self._main_loop, range(self.n_processes))
 
 					
 	def run(self):

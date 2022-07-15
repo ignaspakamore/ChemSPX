@@ -97,6 +97,8 @@ class CSPX:
 	def _eval_fx_distribution(self, points):
 
 		'''
+		# THE FOLLOWING CODE GENERATES 2D grid maps
+		# ONLY WORKS FOR 2D SAMPLES..
 		ndim = len(self.train_data[0])
 
 		if self.indict['map_type'] == 'SP_hist':
@@ -281,11 +283,12 @@ class CSPX:
 			np.savetxt(f"{self.indict['out_dir']}/initial_fx.csv", self.fx1, delimiter=",")
 
 
+
 	def _optimisation_loop(self):
 		if self.indict['init_data_sampling'] == 'LHSEQ':
 			self.train_size = 0
 
-		for itt in range(int(self.indict["itteration_num"])):
+		for itt in range(int(self.indict["iteration_num"])):
 			start_time_loop = time.time()
 
 			for ix in range(int(self.indict['sample_number'])):
@@ -345,17 +348,17 @@ class CSPX:
 			self.fx2 = np.zeros(int(self.indict["sample_number"]))
 			
 			if (itt+1) % int(self.indict['write_f_every']) == 0:
-				np.savetxt(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv', self.train_data[self.train_size:len(self.train_data)], delimiter=",")
+				np.savetxt(f'{self.indict["out_dir"]}/iteration_{itt+1}.csv', self.train_data[self.train_size:len(self.train_data)], delimiter=",")
 				#PCA reduction
 				if self.indict['PCA'] == 'True':
-					PCA(f'{self.indict["out_dir"]}/itteration_{itt+1}.csv').reduce()
+					PCA(f'{self.indict["out_dir"]}/iteration_{itt+1}.csv').reduce()
 
 			#Writes out stats data:
 			#Average derrivative of f(x), average of f(x), 2nd derrivative of average of f(x), std of average f(x), and loop time
 			#---------------------------  ---------------  ---------------   ----------------  -------------------      ---------
 
 			if itt == 0:
-				fx_header = np.array([['itteration','average of f(x)', 'Average derrivative of f(x)', '2nd derrivative of average of f(x)', 'std of average f(x)',
+				fx_header = np.array([['iteration','average of f(x)', 'Average derrivative of f(x)', '2nd derrivative of average of f(x)', 'std of average f(x)',
 				'average CCC','loop time']])
 				fx_data = np.array([[itt+1, self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.ccf, loop_time]])
 

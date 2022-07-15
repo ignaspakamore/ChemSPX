@@ -193,17 +193,18 @@ class CSPX_BO(Function):
 
     def run_bayassian(self, variable_boundaries):
         #Correction for boundary conditions as pg_minimize requires [(min, max),...]
-        #hence for case min==max 1e-10 is added to max
+        #hence for case min==max 1e-100 is added to max
         for i, j in enumerate(variable_boundaries):
             if variable_boundaries[i][1] == variable_boundaries[i][0]:
-                variable_boundaries[i][1] = variable_boundaries[i][1] + 1e-10
+                variable_boundaries[i][1] = variable_boundaries[i][1] + 1e-100
         bounds = []
 
         for i, j in enumerate(variable_boundaries):
             bounds.append((variable_boundaries[i][0], variable_boundaries[i][1]))
-        
+
+    
         res = gp_minimize(self.f_x, bounds, acq_func="gp_hedge", n_calls=int(self.indict['omptimisation_cycles']),
-            verbose=False, n_random_starts=5, random_state=None)
+            verbose=False, n_random_starts=int(self.indict['omptimisation_cycles']), random_state=None, initial_point_generator='lhs')
 
         return res.x, res.fun
 

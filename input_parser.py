@@ -21,7 +21,7 @@ class InputParser:
 		'split_value':0.1,
 		'GA_iterations':80,
 		'max_iteration_without_improv':50,
-		'print_every': 5,
+		'print_every': 1,
 		'write_initial': 'False',
 		'map_function': 'False',
 		'random_seed': None,
@@ -44,7 +44,7 @@ class InputParser:
 				'UBL',
 				'LBL',
 				'sample_number',
-				'itteration_num',
+				'iteration_num',
 				'method',
 				'xi',
 				'f(x)']
