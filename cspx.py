@@ -40,15 +40,14 @@ class CSPX:
 		self.der_fx1 = 0
 		self.der_fx2 = 0
 		self.av_fx = 0
-		self.ccf = 0
+		self.del_vector = 0
 		self.xi = float(self.indict['xi'])
 		self.xi_init = float(self.indict['xi'])
 		self.step = int(self.indict['sample_number'])
 		self.vect_change = np.zeros(int(self.indict["sample_number"]))
 		self.max_bound = [float(x) for x in np.fromstring(self.indict["UBL"], sep=',')]
 		self.min_bound = [float(x) for x in np.fromstring(self.indict["LBL"], sep=',')]
-		if self.indict['k'] != 'all':
-			self.train_size = float(self.indict['k'])
+
 
 
 	def _get_space_var(self):
@@ -226,7 +225,7 @@ class CSPX:
 			cond1 = 'YES'
 		if self.av_del_fx <= float(self.indict['conv_del_fx']):
 			cond2 = 'YES'
-		if self.ccf <= float(self.indict['conv_vec']):
+		if self.del_vector <= float(self.indict['conv_vec']):
 			cond3 = 'YES'
 		print_loop_conv(cond1, cond2, cond3)
 
@@ -328,8 +327,8 @@ class CSPX:
 				self.train_data[point_idx] = optimised_point
 
 			self._get_stats()
-			#ccf - coordinate change factor
-			self.ccf = np.average(self.vect_change)
+			#vector change
+			self.del_vector= np.average(self.vect_change)
 			self.av_fx = np.average(self.fx1)
 
 			end_time_loop = time.time()
@@ -343,12 +342,14 @@ class CSPX:
 			if itt == 0:
 				der_fx = 0
 
-			print_loop_info(itt+1, self.av_fx, self.av_del_fx, self.ccf, loop_time, self.indict["OPT_method"], self.indict["print_every"])
+			print_loop_info(itt+1, self.av_fx, self.av_del_fx, self.del_vector, loop_time, self.indict["OPT_method"], self.indict["print_every"])
 			self.fx1 = self.fx2
 			self.fx2 = np.zeros(int(self.indict["sample_number"]))
 			
 			if (itt+1) % int(self.indict['write_f_every']) == 0:
+
 				np.savetxt(f'{self.indict["out_dir"]}/iteration_{itt+1}.csv', self.train_data[self.train_size:len(self.train_data)], delimiter=",")
+
 				#PCA reduction
 				if self.indict['PCA'] == 'True':
 					PCA(f'{self.indict["out_dir"]}/iteration_{itt+1}.csv').reduce()
@@ -360,7 +361,8 @@ class CSPX:
 			if itt == 0:
 				fx_header = np.array([['iteration','average of f(x)', 'Average derrivative of f(x)', '2nd derrivative of average of f(x)', 'std of average f(x)',
 				'average CCC','loop time']])
-				fx_data = np.array([[itt+1, self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.ccf, loop_time]])
+				fx_data = np.array([[itt+1, self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.del_vector
+		, loop_time]])
 
 				f = open(f'{self.indict["out_dir"]}/fx_data.csv', 'a')
 				np.savetxt(f, fx_header, delimiter=",", fmt="%s")
@@ -368,7 +370,8 @@ class CSPX:
 				f.close()
 
 			else:
-				fx_data = np.array([[itt+1,self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.ccf, loop_time]])
+				fx_data = np.array([[itt+1,self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.del_vector
+		, loop_time]])
 				f = open(f'{self.indict["out_dir"]}/fx_data.csv', 'a')
 				np.savetxt(f, fx_data, delimiter=",")
 				f.close()
