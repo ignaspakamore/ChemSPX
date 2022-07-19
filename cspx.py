@@ -1,4 +1,4 @@
-from modules import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
+from functions import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
 from ploop import PLoop
 from pca import PCA
 from printing import *
