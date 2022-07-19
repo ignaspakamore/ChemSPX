@@ -3,7 +3,7 @@ from sklearn.neighbors import BallTree
 #from printing import print_ploop
 import multiprocessing
 import time
-from functions import Space, CSPX_BO, CSPX_GA, CSPX_GRID
+from ChemSPX.functions import Space, CSPX_BO, CSPX_GA, CSPX_GRID
 
 
 class PLoop():

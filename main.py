@@ -1,7 +1,8 @@
-from functions import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
-from ploop import PLoop
-from pca import PCA
-from printing import *
+#!/usr/bin/python
+from ChemSPX.functions import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
+from ChemSPX.ploop import PLoop
+from ChemSPX.pca import PCA
+from ChemSPX.printing import *
 from datetime import datetime
 import time
 import numpy as np
@@ -9,7 +10,7 @@ import csv
 import os
 import sys
 import shutil
-from input_parser import InputParser
+from ChemSPX.input_parser import InputParser
 import math
 from smt.sampling_methods import LHS
 from multiprocessing import Pool

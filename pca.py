@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.decomposition import PCA
 from scipy.spatial.distance import pdist
-from input_parser import InputParser
+from ChemSPX.input_parser import InputParser
 
 class PCA():
     '''

@@ -10,7 +10,7 @@ import concurrent.futures
 from multiprocessing import Pool
 import math
 from smt.sampling_methods import LHS
-from printing import *
+#from printing import *
 from skopt import gp_minimize
 from scipy.spatial.distance import cdist
 
