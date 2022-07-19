@@ -389,7 +389,7 @@ class VOID(CSPX_GA, Space):
 
             print_void_info(i+1, int(self.f_x_radius_values[i]), void_loop_time)
 
-        print(" Void search completed.\n")
+        print("Void search completed.\n")
         np.savetxt(f'{self.indict["out_dir"]}/void_search.csv', points, delimiter=",")
 
         return points
