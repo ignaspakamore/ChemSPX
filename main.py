@@ -28,6 +28,7 @@ class CSPX:
 		'''
 		self.inp = InputParser(input)
 		self.indict = self.inp.get()
+
 		if self.indict['init_data_sampling'] != 'LHSEQ':
 			with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
 				self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)

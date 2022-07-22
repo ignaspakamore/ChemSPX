@@ -65,17 +65,26 @@ class InputParser:
 
 	def get(self) -> dict:
 
-		f = open(self.input, 'r')
+		if type(self.input) == str:
 
-		for line in f:
-			if not line.startswith('#'):
-				if not line == '\n':
-					key = line.split(' ', 1)[0].strip()
-					val = line.split(' ', 1)[1].strip()
-					if '#' in val:
-						val = val.split('#', 1)[0].strip()
-					self.dict[key] = val
+			f = open(self.input, 'r')
 
+			for line in f:
+				if not line.startswith('#'):
+					if not line == '\n':
+						key = line.split(' ', 1)[0].strip()
+						val = line.split(' ', 1)[1].strip()
+						if '#' in val:
+							val = val.split('#', 1)[0].strip()
+						self.dict[key] = val
+
+		elif type(self.input) == dict:
+			for key, element in self.input.items():
+				self.dict[key] = element
+			
+		else:
+			print('Could not parse input file. WRONG FORMAT')
+			raise SystemExit
 		self._check_indict()
 
 		return self.dict
