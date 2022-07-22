@@ -190,10 +190,7 @@ class CSPX:
 		f.close()
 
 
-		print(f"""
-------------------------------------
-**Function distribution calculated**
-------------------------------------""")
+		print(f"""Function distribution calculated""")
 
 
 	def _get_initial_stats(self):
@@ -401,7 +398,7 @@ class Program(CSPX):
 
 		start_time = time.time()
 
-		if self.indict['verbose'] !=0:
+		if int(self.indict['verbose']) != 0:
 			print_logo()
 		if int(self.indict['n_processes']) != -1 and int(self.indict['n_processes']) != 1:
 			print(f'Number of processes set to {self.indict["n_processes"]}.')
@@ -419,7 +416,7 @@ class Program(CSPX):
 		self._get_initial_stats()
 		self._optimisation_loop()
 		#PLoop(self.indict, self.train_data).run()
-		if self.indict['verbose'] !=0:
+		if int(self.indict['verbose']) != 0:
 			print_finished()
 
 
@@ -432,14 +429,5 @@ class Program(CSPX):
 	
 	  
 
-if __name__ == "__main__":
-	try:
-		inpt = sys.argv[1]
-	except IndexError:
-		print("Input file must be specified")
-		raise SystemExit
-
-	program = Program(inpt)
-	program.run()
 	
 	
