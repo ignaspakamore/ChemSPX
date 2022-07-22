@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import _thread 
 
 
+
 class CSPXGUI():
 	def __init__(self):
 		self.indict = None
@@ -51,8 +52,8 @@ class CSPXGUI():
 				  )],
 				  [sg.Button('Generate input'),sg.Button('Edit input'), sg.Button('RUN')]]
 
-
-		col2 = [[sg.Button('FFF')]]
+		output = sg.Text()
+		col2 = [[output]]
 
 		# All the stuff inside your window.
 
@@ -65,6 +66,7 @@ class CSPXGUI():
 			event, values = window.read()
 			if event == 'RUN':
 				print (values)
+				
 
 			if event == 'STOP':
 				pass

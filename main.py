@@ -399,9 +399,10 @@ class Program(CSPX):
 	def run(self):
 
 
-		program_start = time.time()
+		start_time = time.time()
 
-		print_logo()
+		if self.indict['verbose'] !=0:
+			print_logo()
 		if int(self.indict['n_processes']) != -1 and int(self.indict['n_processes']) != 1:
 			print(f'Number of processes set to {self.indict["n_processes"]}.')
 		elif int(self.indict['n_processes']) == -1:
@@ -418,24 +419,27 @@ class Program(CSPX):
 		self._get_initial_stats()
 		self._optimisation_loop()
 		#PLoop(self.indict, self.train_data).run()
+		if self.indict['verbose'] !=0:
+			print_finished()
+
+
+		end_time = time.time()
+		run_time = end_time - start_time
+		print(f"Time elapsed {run_time:.5} s")
+
 		
 
 	
 	  
 
 if __name__ == "__main__":
-	start_time = time.time()
 	try:
 		inpt = sys.argv[1]
 	except IndexError:
-		print("Input file must be specified!")
+		print("Input file must be specified")
 		raise SystemExit
 
 	program = Program(inpt)
 	program.run()
-	end_time = time.time()
-	run_time = end_time - start_time
-	print_finished()
-	print(f"Time elapsed {run_time:.5} s")
 	
 	
