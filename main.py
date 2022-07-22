@@ -32,7 +32,7 @@ class CSPX:
 			with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
 				self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)
 				self.train_data = self.train_data[:, :-1]
-				self.train_size = len(self.train_data)
+				self.train_size = len(self.train_data) -1
 		self.fx1 = np.zeros(int(self.indict["sample_number"]))
 		self.fx2 = np.zeros(int(self.indict["sample_number"]))
 		self.av_del_fx = 0
@@ -240,6 +240,7 @@ class CSPX:
 				self.indict['random_seed'] = int((self.indict['random_seed']))
 			sampling = LHS(xlimits=variable_bounderies, random_state=self.indict['random_seed'])
 			points = sampling(int(self.indict["sample_number"]))
+
 		elif self.indict["init_data_sampling"] == 'LHSEQ':
 			variable_bounderies = self._get_space_var()
 			#Latin hypercube sampling
@@ -289,7 +290,7 @@ class CSPX:
 			start_time_loop = time.time()
 
 			for ix in range(int(self.indict['sample_number'])):
-				point_idx = ix + self.train_size
+				point_idx = ix + self.train_size 
 				point = self.train_data[point_idx]
 				
 				#print(np.where(self.train_data == point))
@@ -411,11 +412,12 @@ class Program(CSPX):
 		if os.path.exists(self.indict["out_dir"]):
 			shutil.rmtree(self.indict["out_dir"])
 		os.makedirs(self.indict["out_dir"])
-
 		self._initial_sampling()
 		self._get_initial_stats()
-		self._optimisation_loop()
-		#PLoop(self.indict, self.train_data).run()
+		if self.indict['ploop'] == 'True':
+			PLoop(self.indict, self.train_data).run()
+		else:
+			self._optimisation_loop()
 		if int(self.indict['verbose']) != 0:
 			print_finished()
 

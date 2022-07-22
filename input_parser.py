@@ -29,7 +29,9 @@ class InputParser:
 		'PCA': 'False',
 		'power': 1, 
 		'k': 'all',
-		'h': 0.1}
+		'h': 0.1, 
+		'verbose': 1, 
+		'ploop':'False'}
 
 	def _check_indict(self):
 

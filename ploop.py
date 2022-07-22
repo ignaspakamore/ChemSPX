@@ -12,7 +12,7 @@ class PLoop():
 		self.indict = indict
 		self.train_data = train_data
 		self.last_train_data_index = len(self.train_data) - int(self.indict['sample_number']) -1
-		self.n_processes = 3
+		self.n_processes = 2
 		self.resolution = 1+self.n_processes
 		self.pspool = []
 		self.split_axes =np.zeros((self.n_processes, len(np.fromstring(self.indict['UBL'], sep=',')), 2))
@@ -163,10 +163,16 @@ class PLoop():
 
 					
 	def run(self):
+		print('Runnin PLOOP')
 		self._gen_cp_of_space()
 		self._divide_space()
 		self._group()
 		self._run_in_paralel()
+
+		#Check stats
+		#Construct main loop
+	 	#Check for bounds and swith between boxes
+
 
 		
 
