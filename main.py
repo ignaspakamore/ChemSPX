@@ -191,6 +191,7 @@ class CSPX:
 		f.close()
 
 
+		
 		print(f"""Function distribution calculated""")
 
 
@@ -268,11 +269,11 @@ class CSPX:
 		
 		elif self.indict['init_data_sampling'] == 'LHSEQ':
 			self.train_data = points
-
-		elif self.indict['map_function'] == 'True':
-			self._eval_fx_distribution(points)
 		else:
 			raise SystemExit
+			
+		if self.indict['map_function'] == 'True':
+			self._eval_fx_distribution(points)
 
 		self._get_initial_fx(points)
 

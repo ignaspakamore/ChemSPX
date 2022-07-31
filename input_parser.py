@@ -63,6 +63,13 @@ class InputParser:
 			if key not in self.dict:
 				self.dict[key] = value
 
+		for key, value in self.default.items():
+			if value == 'true':
+				self.dict[key] ='True'
+			elif value == 'false':
+				self.dict[key] ='False'
+
+
 	def get(self) -> dict:
 
 		if type(self.input) == str:
