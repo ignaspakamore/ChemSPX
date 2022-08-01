@@ -188,13 +188,13 @@ class CSPX_GRID(Function):
         return points[min_val_idx], self.fx_values[min_val_idx]
 
 
-class CSPX_BO(Function) -> list:
+class CSPX_BO(Function):
     def __init__(self, indict, train_data):
         self.indict = indict
         self.train_data = train_data
         self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
 
-    def run_bayassian(self, variable_boundaries):
+    def run_bayassian(self, variable_boundaries) -> list:
         #Correction for boundary conditions as pg_minimize requires [(min, max),...]
         #hence for case min==max 1e-100 is added to max
         for i, j in enumerate(variable_boundaries):

@@ -1,10 +1,13 @@
 import sys
 class InputParser:
 	def __init__(self, inptfle):
+
+		'''
+		Contains default values for input.
+		'''
 		
 		self.input = inptfle
 		self.dict = {}
-#  !!!DEFAULT VALUES FOR CALCULATIONS!!!
 		self.default ={
 		'print_parameters':'False',
 		'init_data_sampling': 'LHS',
