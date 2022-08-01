@@ -26,7 +26,6 @@ class InputParser:
 		'map_function': 'False',
 		'random_seed': None,
 		'check_conv_every': 10,
-		'PCA': 'False',
 		'power': 1, 
 		'k': 'all',
 		'h': 0.1, 
@@ -42,6 +41,7 @@ class InputParser:
 
 		important = [
 				'OPT_method',
+				'init_data_sampling',
 				'Apply_BD',
 				'UBL',
 				'LBL',
