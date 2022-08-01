@@ -121,10 +121,13 @@ class CSPX_GA(Function):
         if fx == None:
             fx = self.f_x
 
-        algorithm_param = {'max_num_iteration': float(self.indict['omptimisation_cycles']), 'population_size': float(self.indict['pop_size']),
-                        'mutation_probability': float(self.indict['mut_prob']),
-                           'elit_ratio': 0.01, 'crossover_probability': float(self.indict['cross_prob']),
-                           'parents_portion': float(self.indict['parent_po']), 'crossover_type': 'uniform',
+        algorithm_param = {'max_num_iteration': float(self.indict['omptimisation_cycles']), 
+                            'population_size': float(self.indict['pop_size']),
+                            'mutation_probability': float(self.indict['mut_prob']),
+                           'elit_ratio': self.indict['elit_ratio'], 
+                           'crossover_probability': float(self.indict['cross_prob']),
+                           'parents_portion': float(self.indict['parent_po']), 
+                           'crossover_type': self.indict['uniform'],
                            'max_iteration_without_improv': int(self.indict['max_iteration_without_improv'])}
 
         model = ga(function=fx, dimension=len(variables), variable_type='real',
