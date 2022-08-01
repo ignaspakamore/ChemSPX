@@ -234,6 +234,7 @@ class CSPX:
 			return 0
 		else:
 			return 1
+			
 	def _initial_sampling(self):
 		if self.indict["init_data_sampling"] == 'LHS':
 			variable_bounderies = self._get_space_var()
