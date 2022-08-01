@@ -49,7 +49,7 @@ class Function():
         return r
     def _run_external(self, X):
             try:
-                from F import Fx
+                from ChemSPX.F import Fx
             except ImportError:
                 raise ImportError('F.py was not found in /src directory')
             f = Fx(self.indict, self.train_data)
