@@ -56,7 +56,7 @@ class Function():
             return f.f_x(X)
         
 
-    def f_x(self, X):
+    def f_x(self, X) -> float:
 
         X = np.array(X)
         
@@ -116,7 +116,7 @@ class CSPX_GA(Function):
         self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
 
 
-    def run_GA(self, variables, fx=None):
+    def run_GA(self, variables, fx=None) -> dict:
          
         if fx == None:
             fx = self.f_x
@@ -148,7 +148,7 @@ class CSPX_GRID(Function):
         self.fx_values = np.zeros(int(self.indict["GRID_sample_number"]))
         self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
 
-    def run_cspx_grid(self, variable_boundaries):
+    def run_cspx_grid(self, variable_boundaries) -> list:
 
         if self.indict['random_seed'] != None:
                 self.indict['random_seed'] = int((self.indict['random_seed']))
@@ -188,7 +188,7 @@ class CSPX_GRID(Function):
         return points[min_val_idx], self.fx_values[min_val_idx]
 
 
-class CSPX_BO(Function):
+class CSPX_BO(Function) -> list:
     def __init__(self, indict, train_data):
         self.indict = indict
         self.train_data = train_data
