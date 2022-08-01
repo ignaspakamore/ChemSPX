@@ -234,7 +234,7 @@ class CSPX:
 			return 0
 		else:
 			return 1
-			
+
 	def _initial_sampling(self):
 		if self.indict["init_data_sampling"] == 'LHS':
 			variable_bounderies = self._get_space_var()
@@ -362,7 +362,7 @@ class CSPX:
 
 			if itt == 0:
 				fx_header = np.array([['iteration','average of f(x)', 'Average derrivative of f(x)', '2nd derrivative of average of f(x)', 'std of average f(x)',
-				'average CCC','loop time']])
+				'average vec. change','loop time']])
 				fx_data = np.array([[itt+1, self.av_fx, self.av_del_fx, der_fx, self.std_fx, self.del_vector
 		, loop_time]])
 
