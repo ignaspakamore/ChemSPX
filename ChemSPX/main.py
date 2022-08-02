@@ -230,7 +230,7 @@ class CSPX:
 		print_loop_conv(cond1, cond2, cond3)
 
 		if cond1 == cond2 == cond3 == 'YES':
-			print('Converged on all three criteria.')
+			print('**Converged on all three criteria**')
 			return 0
 		else:
 			return 1
