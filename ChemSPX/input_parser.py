@@ -33,7 +33,9 @@ class InputParser:
 		'k': 'all',
 		'h': 0.1, 
 		'verbose': 1, 
-		'ploop':'False'}
+		'ploop':'False',
+		'PCA':'False',
+		'pca_n_components':2}
 
 	def _check_indict(self):
 

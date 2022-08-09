@@ -127,7 +127,7 @@ class CSPX_GA(Function):
                            'elit_ratio': self.indict['elit_ratio'], 
                            'crossover_probability': float(self.indict['cross_prob']),
                            'parents_portion': float(self.indict['parent_po']), 
-                           'crossover_type': self.indict['uniform'],
+                           'crossover_type': self.indict['crossover_type'],
                            'max_iteration_without_improv': int(self.indict['max_iteration_without_improv'])}
 
         model = ga(function=fx, dimension=len(variables), variable_type='real',
