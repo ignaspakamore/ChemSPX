@@ -51,7 +51,7 @@ class Function():
             try:
                 from ChemSPX.F import Fx
             except ImportError:
-                raise ImportError('F.py was not found in /src directory')
+                raise ImportError('ERROR: F.py was not found in src directory')
             f = Fx(self.indict, self.train_data)
             return f.f_x(X)
         
@@ -103,7 +103,7 @@ class Function():
         elif self.indict["f(x)"] == "external":
             return self._run_external(X)
         else:
-            print('WRONG f(x) keyword!')
+            print('ERROR: WRONG f(x) keyword!')
             raise SystemExit
 
 
@@ -392,7 +392,7 @@ class VOID(CSPX_GA, Space):
 
             print_void_info(i+1, int(self.f_x_radius_values[i]), void_loop_time)
 
-        print("Void search completed.\n")
+        print("DONE: Void search completed.\n")
         np.savetxt(f'{self.indict["out_dir"]}/void_search.csv', points, delimiter=",")
 
         return points

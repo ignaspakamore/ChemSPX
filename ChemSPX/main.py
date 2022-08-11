@@ -192,7 +192,7 @@ class CSPX:
 
 
 		
-		print(f"""Function distribution calculated""")
+		print('DONE: Function distribution calculated')
 
 
 	def _get_initial_stats(self):
