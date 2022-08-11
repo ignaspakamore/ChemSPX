@@ -268,6 +268,7 @@ class CSPX:
 		elif self.indict['init_data_sampling'] == 'LHSEQ':
 			self.train_data = points
 		else:
+			print('ERROR: Wrong initial sampling method specified.')
 			raise SystemExit
 		
 		if self.indict['map_function'] == 'True':
@@ -319,8 +320,8 @@ class CSPX:
 					f_x = optimised[1]
 					
 				else:
-					print('WRONG optimisation method specified!')
-					break
+					print('ERROR: Wrong optimisation method specified!')
+					raise SystemExit
 
 				x1 = point #x1 and x2 for vector diff.
 				x2 = optimised_point

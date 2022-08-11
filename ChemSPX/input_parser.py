@@ -60,7 +60,7 @@ class InputParser:
 		try:
 			for key in important:
 				if key not in self.dict:
-					print(f"Input ERROR: {key} mus be defined in program input file!")
+					print(f"ERROR: {key} mus be defined in program input file!")
 					raise SystemExit
 		except:
 			raise SystemExit
@@ -98,7 +98,7 @@ class InputParser:
 				self.dict[key] = element
 			
 		else:
-			print('Could not parse input file. WRONG FORMAT')
+			print('ERROR: Could not parse input file. WRONG FORMAT')
 			raise SystemExit
 		self._check_indict()
 
@@ -107,8 +107,12 @@ class InputParser:
 	def _check_input_ref_fle(self):
 		with open(self.dict['in_file'], 'r', encoding='utf-8-sig') as f:
 				train_data = np.genfromtxt(f, delimiter=',', dtype=float)
+
+		if np.isnan(np.sum(train_data)):
+			print('ERROR: Referece data input contains NaN values!')
+
 		if sum(train_data[:, -1]) != 0:
-			print('Last column in the reference data file must conatin 0 or 1 values!')
+			print('ERROR: Last column in the reference data file must conatin 0 or 1 values!')
 			raise SystemExit
 
 
