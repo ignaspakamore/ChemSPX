@@ -33,7 +33,7 @@ class CSPX:
 			with open(self.indict['in_file'], 'r', encoding='utf-8-sig') as f:
 				self.train_data = np.genfromtxt(f, delimiter=',', dtype=float)
 				self.train_data = self.train_data[:, :-1]
-				self.train_size = len(self.train_data) -1
+				self.train_size = len(self.train_data) 
 		self.fx1 = np.zeros(int(self.indict["sample_number"]))
 		self.fx2 = np.zeros(int(self.indict["sample_number"]))
 		self.av_del_fx = 0
@@ -236,6 +236,7 @@ class CSPX:
 			return 1
 
 	def _initial_sampling(self):
+
 		if self.indict["init_data_sampling"] == 'LHS':
 			variable_bounderies = self._get_space_var()
 			#Latin hypercube sampling
@@ -256,6 +257,7 @@ class CSPX:
 			#VOID exploration algorithm
 			sampling = VOID(self.indict, self.train_data)
 			points  = sampling.search()
+
 		elif self.indict["init_data_sampling"] == 'restart':
 			#Read in data points for restart of calculation:
 			f = self.indict["restart_file_name"]
@@ -263,18 +265,18 @@ class CSPX:
 			self.indict['sample_number'] = len(points)
 			print(f'Restart data taken from {f} file.')
 
-		#If True: does not combine points with reference data, hence f(x) is calculated only to the respect to ref data
-		#and not generated sample points allowing to map function. 
-		if self.indict['map_function'] == 'False' and self.indict['init_data_sampling'] != 'LHSEQ':
-			self.train_data = np.vstack((self.train_data, points))
-		
 		elif self.indict['init_data_sampling'] == 'LHSEQ':
 			self.train_data = points
 		else:
 			raise SystemExit
-			
+		
 		if self.indict['map_function'] == 'True':
 			self._eval_fx_distribution(points)
+
+		#If True: does not combine points with reference data, hence f(x) is calculated only to the respect to ref data
+		#and not generated sample points allowing to map function. 
+		if self.indict['map_function'] == 'False' and self.indict['init_data_sampling'] != 'LHSEQ':
+			self.train_data = np.vstack((self.train_data, points))
 
 		self._get_initial_fx(points)
 
@@ -347,6 +349,7 @@ class CSPX:
 			print_loop_info(itt+1, self.av_fx, self.av_del_fx, self.del_vector, loop_time, self.indict["OPT_method"], self.indict["print_every"])
 			self.fx1 = self.fx2
 			self.fx2 = np.zeros(int(self.indict["sample_number"]))
+
 			
 			if (itt+1) % int(self.indict['write_f_every']) == 0:
 

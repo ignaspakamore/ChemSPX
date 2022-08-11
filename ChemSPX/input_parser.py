@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 class InputParser:
 	def __init__(self, inptfle):
 
@@ -73,6 +74,8 @@ class InputParser:
 				self.dict[key] ='True'
 			elif value == 'false':
 				self.dict[key] ='False'
+		self._check_input_ref_fle()
+
 
 
 	def get(self) -> dict:
@@ -101,9 +104,18 @@ class InputParser:
 
 		return self.dict
 
+	def _check_input_ref_fle(self):
+		with open(self.dict['in_file'], 'r', encoding='utf-8-sig') as f:
+				train_data = np.genfromtxt(f, delimiter=',', dtype=float)
+		if sum(train_data[:, -1]) != 0:
+			print('Last column in the reference data file must conatin 0 or 1 values!')
+			raise SystemExit
+
+
 
 
 if __name__ == "__main__":
 	inpt = InputParser(sys.argv[1])
 	inpt.get()
 	inpt._check_indict()
+
