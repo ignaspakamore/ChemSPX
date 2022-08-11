@@ -192,7 +192,7 @@ class CSPX:
 
 
 		
-		print('DONE: Function distribution calculated')
+		print('DONE: Function distribution calculated.')
 
 
 	def _get_initial_stats(self):
@@ -230,7 +230,7 @@ class CSPX:
 		print_loop_conv(cond1, cond2, cond3)
 
 		if cond1 == cond2 == cond3 == 'YES':
-			print('**Converged on all three criteria**')
+			print('DONE: Converged on all three criteria.')
 			return 0
 		else:
 			return 1
