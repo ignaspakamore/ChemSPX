@@ -69,11 +69,13 @@ class InputParser:
 			if key not in self.dict:
 				self.dict[key] = value
 
+		#Corrects true/false infut
 		for key, value in self.dict.items():
 			if value == 'true' or value == 't' or value == 'T':
 				self.dict[key] ='True'
 			elif value == 'false' or value == 'f' or value == 'F':
 				self.dict[key] ='False'
+				
 		self._check_input_ref_fle()
 
 
