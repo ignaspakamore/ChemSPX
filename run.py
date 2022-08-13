@@ -7,7 +7,7 @@ if __name__ == "__main__":
 	try:
 		inpt = sys.argv[1]
 	except IndexError:
-		print("Input file must be specified")
+		print("ERROR: Input file must be specified.")
 		raise SystemExit
 
 	program = Program(inpt)

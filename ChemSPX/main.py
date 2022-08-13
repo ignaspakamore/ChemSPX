@@ -431,7 +431,7 @@ class Program(CSPX):
 
 		end_time = time.time()
 		run_time = end_time - start_time
-		print(f"Time elapsed {run_time:.5} s")
+		print(f"DONE: Time elapsed {run_time:.5} s")
 
 		
 
