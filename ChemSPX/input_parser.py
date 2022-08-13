@@ -98,7 +98,7 @@ class InputParser:
 				self.dict[key] = element
 			
 		else:
-			print('ERROR: Could not parse input file. WRONG FORMAT')
+			print('ERROR: Could not parse input file. Use .csv file.')
 			raise SystemExit
 		self._check_indict()
 
