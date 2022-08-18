@@ -23,6 +23,8 @@ class Function():
         self.indict = indict
         if self.indict["f(x)"] == "BallTree_COS" or self.indict["f(x)"] == "BallTree_Force":
             self.tree = BallTree(self.train_data, leaf_size=int(self.indict['leaf_size']), metric=self.indict['metric'])
+        self.max_bound = np.fromstring(self.indict["UBL"], sep=',')
+        self.min_bound = np.fromstring(self.indict["LBL"], sep=',')
 
     def _get_cos(self, idx, X):
         X = X.reshape(1, len(X))
@@ -54,6 +56,22 @@ class Function():
                 raise ImportError('ERROR: F.py was not found in src directory')
             f = Fx(self.indict, self.train_data)
             return f.f_x(X)
+    def _dist(x,y) -> float:   
+        return numpy.sqrt(numpy.sum((x-y)**2))
+    
+    def _pf_bd(self, x, pF) -> float:
+        #      !NOT IN USE!
+        #Pseudo-force baundary condition corrections
+        #Calclulates pFCU and pFCL
+
+        upper_bound = self._dist(x, self.max_bound)
+        lower_bound = self._dist(x, self.min_bound)
+
+        pFCU = 1/(upper_bound**float(self.indict['BD_power']))
+        pFCL = 1/(lower_bound**float(self.indict['BD_power']))
+
+        return pF+pFCU+pFCL
+
         
 
     def f_x(self, X) -> float:
@@ -99,12 +117,14 @@ class Function():
             dist = np.delete(dist, 0)
             idx = np.delete(idx, 0)
             return self._get_cos(idx,X)
+        
 
         elif self.indict["f(x)"] == "external":
             return self._run_external(X)
         else:
             print('ERROR: WRONG f(x) keyword!')
             raise SystemExit
+      
 
 
 class CSPX_GA(Function):
