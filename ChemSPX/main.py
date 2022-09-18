@@ -52,6 +52,7 @@ class CSPX:
 
 
 
+
 	def _get_space_var(self):
 		"""
 		Returns space variable bounderies (min, max values) for each point
@@ -234,6 +235,12 @@ class CSPX:
 			return 0
 		else:
 			return 1
+	def _print_data_table(self):
+
+		print('\n')
+		for i in range(len(self.train_data)):
+			print(f'  {i} {self.train_data[i][:]}')
+		print('\n')
 
 	def _initial_sampling(self):
 
@@ -330,6 +337,8 @@ class CSPX:
 
 				self.fx2[ix] = f_x
 				self.train_data[point_idx] = optimised_point
+
+			#self._print_data_table()
 
 			self._get_stats()
 			#vector change
