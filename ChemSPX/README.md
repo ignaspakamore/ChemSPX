@@ -1,2 +1,0 @@
-# ChemSPX
- Chemical Space Explorer
