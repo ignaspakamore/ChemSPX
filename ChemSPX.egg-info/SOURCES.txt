@@ -1,7 +1,0 @@
-README.md
-setup.py
-ChemSPX.egg-info/PKG-INFO
-ChemSPX.egg-info/SOURCES.txt
-ChemSPX.egg-info/dependency_links.txt
-ChemSPX.egg-info/requires.txt
-ChemSPX.egg-info/top_level.txt
