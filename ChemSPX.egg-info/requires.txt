@@ -1,0 +1,8 @@
+numpy
+sklearn
+matplotlib
+pandas
+scipy
+smt
+scikit-optimize
+geneticalgorithm2

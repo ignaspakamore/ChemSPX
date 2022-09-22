@@ -1,0 +1,12 @@
+Metadata-Version: 1.2
+Name: ChemSPX
+Version: 1.0
+Summary: Chemical Space Explorer
+Home-page: https://github.com/ignaspakamore/ChemSPX
+Author: Ignas Pakamore
+Maintainer: Ignas Pakamore
+License: MIT
+Description: Algorithm for drawing spamples from a multi dimensional parameter space and its assessment.
+Keywords: parameter space,chemical space,reaction space
+Platform: UNKNOWN
+Requires-Python: >=3.7, <4
