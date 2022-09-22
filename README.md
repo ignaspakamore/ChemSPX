@@ -1,7 +1,6 @@
 # ChemSPX (Chemical Space Explorer)
 
-
-## General info	
+Code for sampling and analysing reaction parameter space. 
 
 ## Setup
 To install ChemSPX type:
@@ -14,7 +13,7 @@ $ python3 setup.py install
 $ python3 run.py input.txt
 ```
 
-Input file example
+Input file example:
 
 ```
 #######################################################
