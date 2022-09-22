@@ -62,5 +62,5 @@ f(x) Force
 power 1
 k 6
 ```
-## Code Examples
-To generate lorem ipsum use special shortcode: `put-your-code-here`
+In Jupyter environment:
+![alt text](/Input Manual/code.png)
