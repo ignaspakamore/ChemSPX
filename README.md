@@ -63,4 +63,5 @@ power 1
 k 6
 ```
 In Jupyter environment:
+
 ![alt text](Manual/code.png)
