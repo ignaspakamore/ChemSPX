@@ -13,12 +13,13 @@ setup(
     keywords=['parameter space', 'chemical space', 'reaction space'],
     install_requires=[
         'numpy',
-        'sklearn',
+        'scikit-learn',
         'matplotlib',
         'pandas',
         'scipy', 
         'smt', 
         'scikit-optimize', 
-        'geneticalgorithm2'
+        'geneticalgorithm2==6.8.6'
     ],
+    packages=['ChemSPX']
 )
