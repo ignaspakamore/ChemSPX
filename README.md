@@ -64,3 +64,10 @@ k 6
 In Jupyter environment:
 
 ![alt text](Manual/code.png)
+
+## To-Do:
+* Facilitate work from notebook (return values instead of writing out).
+* Update BO library.
+* Create examples.
+* Test files.
+* Documentation.
