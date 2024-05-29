@@ -61,9 +61,6 @@ f(x) Force
 power 1
 k 6
 ```
-In Jupyter environment:
-
-![alt text](Manual/code.png)
 
 ## To-Do:
 * Facilitate work from notebook (return values instead of writing out).
