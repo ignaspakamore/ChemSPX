@@ -9,7 +9,7 @@ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
                                                              """
     )
     print(f"{18*' '}Chemical Space Explorer")
-    print(f"{18*' '}     I. Pakamore       ")
+    print(f"{18*' '}    I. Pakamore PhD    ")
     print(f"{19*' '}University of Glasgow\n")
 
 
