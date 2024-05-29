@@ -157,7 +157,7 @@ class ChemSPX:
         x_vals = np.linspace(min(fx), max(fx), 100)
         result = kde.evaluate(x_vals)
         result = np.c_[x_vals, result]
-        
+
         f = open(f'{self.indict["out_dir"]}/fx_map.csv', "a")
         np.savetxt(f, result, delimiter=",", fmt="%s")
         f.close()
@@ -296,7 +296,7 @@ class ChemSPX:
                         point_bounderies
                     )
                     optimised_point = optimised_point_dict["variable"]
-                    f_x = optimised_point_dict["function"]
+                    f_x = optimised_point_dict["score"]
 
                 elif self.indict["OPT_method"] == "GRID":
                     optimised = CSPX_GRID(self.indict, self.train_data).run_cspx_grid(
