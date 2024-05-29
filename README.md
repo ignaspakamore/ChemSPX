@@ -1,4 +1,4 @@
-# ChemSPX (Chemical Space Explorer)
+# ChemSPX 🚀
 
 Code for sampling and analysing reaction parameter space. 
 
