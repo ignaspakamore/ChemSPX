@@ -1,14 +1,13 @@
 #!/usr/bin/python
 import sys
-from ChemSPX.main import Program
+from ChemSPX import ChemSPX
 
 
 if __name__ == "__main__":
-	try:
-		inpt = sys.argv[1]
-	except IndexError:
-		print("ERROR: Input file must be specified.")
-		raise SystemExit
+    try:
+        inpt = sys.argv[1]
+    except IndexError:
+        print("ERROR: Input file must be specified.")
+        raise SystemExit
 
-	program = Program(inpt)
-	program.run()
+    program = ChemSPX(inpt).run()
