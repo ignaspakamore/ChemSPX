@@ -100,18 +100,6 @@ class ChemSPX:
             pool.close()
             pool.join()
 
-    def pca(self, x) -> pd.DataFrame:
-        """
-        Returns:
-            ...
-        """
-        pca = PCA(n_components=2)
-
-        principalComponents = pca.fit_transform(x)
-        principalDf = pd.DataFrame(data=principalComponents)
-
-        return principalDf
-
     def _generate_grid_coordinates(self, step) -> list:
         """
         Generate vertex coordinates of an n-dimensional grid with custom minimum and maximum values.
