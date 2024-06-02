@@ -4,3 +4,6 @@ ChemSPX.egg-info/
 build/
 dist/
 __pycache__/
+
+# Directory specific for RnD 
+RnD/
