@@ -1,2 +1,2 @@
 from .main import ChemSPX
-from .ExplorationVolume import explored_space_ratio
+from .ParSpaceCoverage import explored_space_ratio
