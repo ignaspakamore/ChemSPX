@@ -55,6 +55,9 @@ def monte_carlo_worker(batch_range: list) -> int:
         for sphere in spheres:
             if np.linalg.norm(point - sphere["center"]) <= sphere["radius"]:
                 count_inside += 1
+                break
+            else:
+                continue
 
     return count_inside
 
@@ -96,7 +99,7 @@ def compute_total_volume(bounds: list) -> float:
     return hyper_rectangle_vol
 
 
-def calculate(
+def explored_space_ratio(
     data: np.array,
     bounds: list,
     radius: float,
@@ -123,10 +126,3 @@ def calculate(
     free_ratio = 1 - occupied_ratio
 
     return {"free_space": free_ratio, "occupied_space": occupied_ratio}
-
-
-if __name__ == "__main__":
-    bounds = [[0, 0, 0], [1, 1, 1]]
-    data = np.array([[0, 0, 0], [0.5, 0.5, 0.5], [0.2, 0.1, 0.1]])
-
-    calculate(bounds, data, radius=0.86)
