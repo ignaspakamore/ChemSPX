@@ -13,7 +13,7 @@ setup(
     keywords=["parameter space", "chemical space", "reaction space"],
     install_requires=[
         "numpy",
-        "scikit-learn",
+        "scikit-learn==1.3.2",
         "matplotlib",
         "pandas",
         "scipy",
