@@ -1,9 +1,11 @@
-# ChemSPX 🚀
 
-Code for sampling and analysing reaction parameter space. 
+# ChemSPX - a toolkit for sampling and analysing reaction parameter space. 
 
+## Features 
 
-## Set up
+## Instalation
+
+ChemSPX requires python 3.12. 
 
 1. set-up conda environmnet.
 
@@ -23,21 +25,7 @@ conda activate chemspx
 pip install setup.py
 ```
 
-4.1. Run example code from terminal.
-
-```
-cd examples/2d
-
-chemspx input.txt
-```
-
-4.2. Or try jupyter notebook
+## Getting started 
 
 
 
-## To-Do:
-* Facilitate work from notebook (return values instead of writing out).
-* Update BO library.
-* Create examples.
-* Test files.
-* Documentation.
