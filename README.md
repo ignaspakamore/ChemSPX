@@ -1,9 +1,9 @@
 
 # ChemSPX - a toolkit for sampling and analysing reaction parameter space. 
 
-## Features 
+# Features 
 
-## Instalation
+# Instalation
 
 ChemSPX requires python 3.12. 
 
@@ -25,7 +25,7 @@ conda activate chemspx
 pip install setup.py
 ```
 
-## Getting started 
+# Getting started 
 
 
 
