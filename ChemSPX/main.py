@@ -7,7 +7,6 @@ from ChemSPX.printing import (
     _print_finished,
     _print_loop_info,
     _print_init_info,
-    _print_void_info,
     _print_loop_conv,
 )
 from ChemSPX.input_parser import InputParser

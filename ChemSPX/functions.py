@@ -4,14 +4,10 @@ import os
 from geneticalgorithm2 import geneticalgorithm2 as ga
 from sklearn.neighbors import BallTree
 from sklearn.metrics.pairwise import cosine_similarity
-import shutil
 import time
-import concurrent.futures
 from multiprocessing import Pool
-import math
 from smt.sampling_methods import LHS
-
-# from printing import *
+from ChemSPX.printing import _print_void_info
 from skopt import gp_minimize
 from scipy.spatial.distance import cdist
 
@@ -440,12 +436,12 @@ class VOID(CSPX_GA, Space):
             self.train_data = np.vstack(
                 [self.train_data, optimised_point_dict["variable"]]
             )
-            self.f_x_radius_values[i] = optimised_point_dict["function"]
+            self.f_x_radius_values[i] = optimised_point_dict["score"]
 
             end_time = time.time()
             void_loop_time = end_time - start_time
 
-            print_void_info(i + 1, int(self.f_x_radius_values[i]), void_loop_time)
+            _print_void_info(i + 1, int(self.f_x_radius_values[i]), void_loop_time)
 
         print("DONE: Void search completed.\n")
         np.savetxt(f'{self.indict["out_dir"]}/void_search.csv', points, delimiter=",")
