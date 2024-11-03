@@ -13,7 +13,7 @@ setup(
     keywords=["parameter space", "chemical space", "reaction space"],
     install_requires=[
         "numpy",
-        "scikit-learn",
+        "scikit-learn==1.3.2",
         "matplotlib",
         "pandas",
         "scipy",
@@ -22,4 +22,9 @@ setup(
         "geneticalgorithm2==6.9.2",
     ],
     packages=["ChemSPX"],
+    entry_points={
+        "console_scripts": [
+            "chemspx = ChemSPX.run:program",
+        ],
+    },
 )

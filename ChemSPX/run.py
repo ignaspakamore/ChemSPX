@@ -1,13 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import sys
+import argparse
 from ChemSPX import ChemSPX
 
 
-if __name__ == "__main__":
+def program():
     try:
-        inpt = sys.argv[1]
+        input = sys.argv[1]
     except IndexError:
         print("ERROR: Input file must be specified.")
         raise SystemExit
 
-    program = ChemSPX(inpt).run()
+    ChemSPX(input).run()
+
+
+if __name__ == "__main__":
+    program()

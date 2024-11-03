@@ -1,6 +1,11 @@
+__pycache__/
+*.pyc
 .DS_Store
 .gitignore.swp
 ChemSPX.egg-info/
 build/
 dist/
 __pycache__/
+
+# Directory specific for RnD 
+RnD/
