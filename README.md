@@ -1,6 +1,7 @@
 
-# ChemSPX - a toolkit for sampling and analysing reaction parameter space. 
+# ChemSPX 
 
+A toolkit for sampling and analysis of reaction and formulation design parameter spaces. 
 
 ## Features
 
@@ -19,34 +20,35 @@
 
 # Instalation
 
-ChemSPX requires python 3.12. 
-Tested on macOS Sonoma Version 14.0. and Ubuntu 22.04.4 LTS. Conda version 24.7.1.
+ChemSPX requires **python 3.12**. 
 
-1. Clone the repository
+Tested on **macOS Sonoma Version 14.0** and **Ubuntu 22.04.4 LTS***. Conda version 24.7.1.
+
+1. Clone the repository.
 
 ```
 git clone https://github.com/ignaspakamore/ChemSPX.git
 ```
 
-2. 
+2. Go into cloned directory.
 
 ```
 cd ChemSPX
 ```
 
-3. set-up conda environmnet.
+3. Set up conda environmnet.
 
 ```
 conda env create -f environment.yaml
 ```
 
-4. Activate environment.
+4. Activate conda environment.
 
 ```
 conda activate chemspx
 ```
 
-5. Install dependencies
+5. Install dependencies.
 
 ```
 pip install .
