@@ -6,23 +6,30 @@
 # Instalation
 
 ChemSPX requires python 3.12. 
+tested on macOS sonoma Version 14.0. 
 
-1. set-up conda environmnet.
+1. Clone the repository
+
+```
+git clone https://github.com/ignaspakamore/ChemSPX.git
+```
+
+2. set-up conda environmnet.
 
 ```
 conda env create -f environment.yaml
 ```
 
-2. Activate environment.
+3. Activate environment.
 
 ```
 conda activate chemspx
 ```
 
-3. Install dependencies
+4. Install dependencies
 
 ```
-pip install setup.py
+pip install .
 ```
 
 # Getting started 
