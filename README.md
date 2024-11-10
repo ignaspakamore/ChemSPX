@@ -56,5 +56,13 @@ pip install .
 
 # Getting started 
 
+After instalation the code can be execute by calling:
 
+```
+chemspx input.txt
+```
+in the terminal. 
 
+The input file contains program execution instruction. 
+Example input can be found in examples/ directory. 
+The input parameters are described in Manual/ChemSPX.pdf document.
