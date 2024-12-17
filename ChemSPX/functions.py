@@ -464,17 +464,15 @@ class RandomSample:
         Returns:
             numpy.ndarray: An N x N array where each row represents a sample.
         """
-        if len(self.boundaries) != self.n_samples:
-            raise ValueError("The length of boundaries must match the number of dimensions (N).")
 
         # Set the random seed if provided
         if self.random_seed is not None:
             np.random.seed(self.random_seed)
 
         # Generate random samples within the specified boundaries
-        samples = np.zeros((self.n_samples, self.n_samples))
+        samples = np.zeros((self.n_samples, len(self.boundaries)))
         for i in range(self.n_samples):
-            min_val, max_val = self.boundaries[i]
-            samples[:, i] = np.random.uniform(low=min_val, high=max_val, size=self.n_samples)
-
+            for j, bound in enumerate(self.boundaries):
+                samples[:, j] = np.random.uniform(low=bound[0], high=bound[1], size=self.n_samples)
+                
         return samples
