@@ -5,7 +5,7 @@ from ChemSPX.functions import (
     CSPX_BO,
     VOID,
     Space,
-    Function,
+    EvaluationFunction,
     RandomSample,
 )
 from ChemSPX.pca import PCA
@@ -89,19 +89,19 @@ class ChemSPX:
 
         if int(self.indict["n_processes"]) == 1:
             for i, point in enumerate(points):
-                fx = Function(self.train_data, self.indict).f_x(point)
+                fx = EvaluationFunction(self.train_data, self.indict).f_x(point)
                 self.fx1[i] = fx
         elif int(self.indict["n_processes"]) > 1:
 
             pool = Pool(processes=int(self.indict["n_processes"]))
-            results = pool.map(Function(self.train_data, self.indict).f_x, points)
+            results = pool.map(EvaluationFunction(self.train_data, self.indict).f_x, points)
             for i in range(len(results)):
                 self.fx1[i] = results[i]
             pool.close()
             pool.join()
         elif int(self.indict["n_processes"]) == -1:
             pool = Pool(processes=os.cpu_count())
-            results = pool.map(Function(self.train_data, self.indict).f_x, points)
+            results = pool.map(EvaluationFunction(self.train_data, self.indict).f_x, points)
             for i in range(len(results)):
                 self.fx1[i] = results[i]
             pool.close()
@@ -142,7 +142,7 @@ class ChemSPX:
 
         points = self._generate_grid_coordinates(float(self.indict["map_grid_size"]))
 
-        function = Function(self.train_data, self.indict)
+        function = EvaluationFunction(self.train_data, self.indict)
 
         # Compute fx values of grid points in parallel
         pool = Pool(int(self.indict["n_processes"]))

@@ -12,7 +12,7 @@ from skopt import gp_minimize
 from scipy.spatial.distance import cdist
 
 
-class Function:
+class EvaluationFunction:
     def __init__(self, train_data, indict):
         self.train_data = train_data
         self.indict = indict
@@ -96,7 +96,7 @@ class Function:
             raise SystemExit
 
 
-class CSPX_GA(Function):
+class CSPX_GA(EvaluationFunction):
 
     def __init__(self, indict, train_data):
 
@@ -141,7 +141,7 @@ class CSPX_GA(Function):
         return model.result
 
 
-class CSPX_GRID(Function):
+class CSPX_GRID(EvaluationFunction):
     def __init__(self, indict, train_data):
 
         self.indict = indict
@@ -192,7 +192,7 @@ class CSPX_GRID(Function):
         return points[min_val_idx], self.fx_values[min_val_idx]
 
 
-class CSPX_BO(Function):
+class CSPX_BO(EvaluationFunction):
     def __init__(self, indict, train_data):
         self.indict = indict
         self.train_data = train_data
