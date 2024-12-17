@@ -262,7 +262,6 @@ class CSPX_BO(Function):
 
 
 class Space:
-
     def __init__(self, indict):
 
         self.indict = indict
@@ -276,7 +275,7 @@ class Space:
         """
             Correcting for boundary conditions
         !There might be problems with negative numbers!
-        !Espetialy for GA algorithm as it expects:    !
+        !Especially for GA algorithm as it expects:   !
         !lower_boundaries must be smaller than        !
         !upper_boundaries [lower,upper]               !
 
@@ -398,8 +397,8 @@ class Space:
 
 class VOID(CSPX_GA, Space):
     """
-    Code explores voids in space based on number of neighbours around given data point (using radius).
-    GA optimises until samallest number is reached. Calculated point is appended to training data set and
+    Code explores voids in space based on number of neighbors around given data point (using radius).
+    GA optimises until smallest number is reached. Calculated point is appended to training data set and
     further point is calculated.
     """
 
@@ -447,3 +446,35 @@ class VOID(CSPX_GA, Space):
         np.savetxt(f'{self.indict["out_dir"]}/void_search.csv', points, delimiter=",")
 
         return points
+
+
+class RandomSample:
+    """
+    Class to generate random sample.
+    """
+    def __init__(self, n_samples, boundaries, random_seed=None):
+        self.n_samples = n_samples
+        self.boundaries = boundaries
+        self.random_seed = random_seed
+
+    def sample_n_dimensional_space(self):
+        """
+        Generates N samples in an N-dimensional space within specified boundaries.
+
+        Returns:
+            numpy.ndarray: An N x N array where each row represents a sample.
+        """
+        if len(self.boundaries) != self.n_samples:
+            raise ValueError("The length of boundaries must match the number of dimensions (N).")
+
+        # Set the random seed if provided
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+
+        # Generate random samples within the specified boundaries
+        samples = np.zeros((self.n_samples, self.n_samples))
+        for i in range(self.n_samples):
+            min_val, max_val = self.boundaries[i]
+            samples[:, i] = np.random.uniform(low=min_val, high=max_val, size=self.n_samples)
+
+        return samples

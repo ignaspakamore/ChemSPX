@@ -1,5 +1,13 @@
 #!/usr/bin/python
-from ChemSPX.functions import CSPX_GA, CSPX_GRID, CSPX_BO, VOID, Space, Function
+from ChemSPX.functions import (
+    CSPX_GA,
+    CSPX_GRID,
+    CSPX_BO,
+    VOID,
+    Space,
+    Function,
+    RandomSample,
+)
 from ChemSPX.pca import PCA
 from ChemSPX.printing import (
     _print_logo,
@@ -233,7 +241,19 @@ class ChemSPX:
             self.indict["sample_number"] = len(points)
             print(f"NOTE: Restart data taken from {f} file.")
 
+        elif self.indict["init_data_sampling"] == "random":
+            variable_bounderies = self._get_space_var()
+
+            random = RandomSample(
+                n_samples=int(self.indict["sample_number"]),
+                boundaries=variable_bounderies,
+                random_seed=int(self.indict["random_seed"]),
+            )
+
+            points = random.sample_n_dimensional_space()
+
         else:
+            print(self.indict["init_data_sampling"])
             print("ERROR: Wrong initial sampling method specified.")
             raise SystemExit
 
