@@ -9,3 +9,5 @@ __pycache__/
 
 # Directory specific for RnD 
 RnD/
+*.txt
+*.csv
