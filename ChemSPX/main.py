@@ -35,7 +35,7 @@ class ChemSPX:
     def __init__(self, input: str | dict) -> None:
         """
         The 'ChemSPX' class is the core of the ChemSPX Python package,
-        cntaining key calculation functions and the primary 'run' operation.
+        containing key calculation functions and the primary 'run' operation.
         """
 
         self.indict = InputParser(input).get()
@@ -314,7 +314,7 @@ class ChemSPX:
                     f_x = optimised[1]
 
                 elif self.indict["OPT_method"] == "BO":
-                    optimised = CSPX_BO(self.indict, self.train_data).run_bayassian(
+                    optimised = CSPX_BO(self.indict, self.train_data).run_bayesian(
                         point_bounderies
                     )
                     optimised_point = optimised[0]
