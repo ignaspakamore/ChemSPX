@@ -107,7 +107,7 @@ class ChemSPX:
             pool.close()
             pool.join()
 
-    def _generate_grid_coordinates(self, step) -> list:
+    def _generate_grid_coordinates(self, step):
         """
         Generate vertex coordinates of an n-dimensional grid with custom minimum and maximum values.
 
@@ -238,6 +238,7 @@ class ChemSPX:
             # Read in data points for restart of calculation:
             f = self.indict["restart_file_name"]
             points = np.genfromtxt(f, delimiter=",", dtype=float)
+            points = points.reshape(-1, 3)[:, :-1]
             self.indict["sample_number"] = len(points)
             print(f"NOTE: Restart data taken from {f} file.")
 
