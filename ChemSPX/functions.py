@@ -66,7 +66,7 @@ class Function:
     def _dist(x, y) -> float:
         return numpy.sqrt(numpy.sum((x - y) ** 2))
 
-    def _pf_bd(self, x, pF) -> float:
+    def _pf_bd(self, x, pF):
         #      !NOT IN USE!
         # Pseudo-force baundary condition corrections
         # Calclulates pFCU and pFCL
@@ -187,7 +187,7 @@ class CSPX_GRID(Function):
             metric=self.indict["metric"],
         )
 
-    def run_cspx_grid(self, variable_boundaries) -> list:
+    def run_cspx_grid(self, variable_boundaries):
 
         if self.indict["random_seed"] != None:
             self.indict["random_seed"] = int((self.indict["random_seed"]))
@@ -236,7 +236,7 @@ class CSPX_BO(Function):
             metric=self.indict["metric"],
         )
 
-    def run_bayassian(self, variable_boundaries) -> list:
+    def run_bayassian(self, variable_boundaries):
         # Correction for boundary conditions as pg_minimize requires [(min, max),...]
         # hence for case min==max 1e-100 is added to max
         for i, j in enumerate(variable_boundaries):
