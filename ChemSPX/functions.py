@@ -10,7 +10,7 @@ from smt.sampling_methods import LHS
 from ChemSPX.printing import _print_void_info
 from skopt import gp_minimize
 from scipy.spatial.distance import cdist
-
+import math
 
 class Function:
     def __init__(self, train_data, indict):
@@ -52,19 +52,11 @@ class Function:
         _xi = x * float(self.indict["xi"])
         x2 = _xi + x
         r2 = x2 - x
-        r = squrt(r2)
+        r = math.squrt(r2)
         return r
 
-    def _run_external(self, X):
-        try:
-            from ChemSPX.F import Fx
-        except ImportError:
-            raise ImportError("ERROR: F.py was not found in src directory")
-        f = Fx(self.indict, self.train_data)
-        return f.f_x(X)
-
     def _dist(x, y) -> float:
-        return numpy.sqrt(numpy.sum((x - y) ** 2))
+        return np.sqrt(np.sum((x - y) ** 2))
 
     def _pf_bd(self, x, pF):
         #      !NOT IN USE!
@@ -139,10 +131,7 @@ class CSPX_GA(Function):
             metric=self.indict["metric"],
         )
 
-    def run_GA(self, variables, fx=None) -> dict:
-
-        if fx is None:
-            fx = self.f_x
+    def run_GA(self, variables) -> dict:
 
         algorithm_param = {
             "max_num_iteration": float(self.indict["omptimisation_cycles"]),
@@ -474,5 +463,5 @@ class RandomSample:
         for i in range(self.n_samples):
             for j, bound in enumerate(self.boundaries):
                 samples[:, j] = np.random.uniform(low=bound[0], high=bound[1], size=self.n_samples)
-                
+
         return samples
