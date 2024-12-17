@@ -113,9 +113,9 @@ class InputParser:
         if np.isnan(np.sum(train_data)):
             print("ERROR: Referece data input contains NaN values!")
 
-        if np.any((train_data[:, -1] == 0) | (train_data[:, -1] == 1)):
+        if np.all((train_data[:, -1] == 0) | (train_data[:, -1] == 1)) is False:
             print(
-                "ERROR: Last column in the reference data file must conatin 0 or 1 values!"
+                "ERROR: Last column in the reference data file must contain 0 or 1 values!"
             )
         
             raise SystemExit
