@@ -97,7 +97,6 @@ class EvaluationFunction:
 
 
 class CSPX_GA(EvaluationFunction):
-
     def __init__(self, indict, train_data):
 
         self.indict = indict
@@ -231,11 +230,25 @@ class Space:
     def __init__(self, indict):
 
         self.indict = indict
-        if self.indict["init_data_sampling"] != "LHSEQ":
-            with open(indict["in_file"], "r", encoding="utf-8-sig") as f:
-                self.data = np.genfromtxt(f, delimiter=",", dtype=float)
+        self.data = self.read_input_file()
         self.max_bound = np.fromstring(self.indict["UBL"], sep=",")
         self.min_bound = np.fromstring(self.indict["LBL"], sep=",")
+
+    def read_input_file(self):
+        if self.indict["init_data_sampling"] != "LHSEQ":
+            with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
+                self.data_points = np.genfromtxt(f, delimiter=",")
+                # Remove headers
+                if np.all(np.isnan(self.data_points[0])):
+                    self.data_points = self.data_points[:, 1:]
+
+                self.data_points = self.data_points.astype("float64")
+                # Remove last column of 0/1
+                self.data_points = self.data_points[:, :-1]
+                self.data_point_size = len(self.data_points)
+
+        if self.indict["init_data_sampling"] == "LHSEQ":
+            self.data_point_size = None
 
     def _boundary_conditions(self, X):
         """
@@ -370,8 +383,8 @@ class VOID(CSPX_GA, Space):
     def __init__(self, indict, train_data):
         self.indict = indict
         self.train_data = train_data
-        with open(indict["in_file"], "r", encoding="utf-8-sig") as f:
-            self.data = np.genfromtxt(f, delimiter=",", dtype=float)
+
+        self.data = self.read_input_file()
         self.max_bound = np.fromstring(self.indict["UBL"], sep=",")
         self.min_bound = np.fromstring(self.indict["LBL"], sep=",")
         self.points = self.full_space()
@@ -417,6 +430,7 @@ class RandomSample:
     """
     Class to generate random sample.
     """
+
     def __init__(self, n_samples, boundaries, random_seed=None):
         self.n_samples = n_samples
         self.boundaries = boundaries
@@ -438,6 +452,8 @@ class RandomSample:
         samples = np.zeros((self.n_samples, len(self.boundaries)))
         for i in range(self.n_samples):
             for j, bound in enumerate(self.boundaries):
-                samples[:, j] = np.random.uniform(low=bound[0], high=bound[1], size=self.n_samples)
+                samples[:, j] = np.random.uniform(
+                    low=bound[0], high=bound[1], size=self.n_samples
+                )
 
         return samples

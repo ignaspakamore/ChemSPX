@@ -40,13 +40,7 @@ class ChemSPX:
 
         self.indict = InputParser(input).get()
 
-        if self.indict["init_data_sampling"] != "LHSEQ":
-            with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
-                self.train_data = np.genfromtxt(f, delimiter=",", dtype=float)
-                self.train_data = self.train_data[:, :-1]
-                self.train_size = len(self.train_data)
-        else:
-            self.train_data = None
+        self.read_input_file()
 
         self.fx1 = np.zeros(int(self.indict["sample_number"]))
         self.fx2 = np.zeros(int(self.indict["sample_number"]))
@@ -64,7 +58,22 @@ class ChemSPX:
         self.max_bound = [float(x) for x in np.fromstring(self.indict["UBL"], sep=",")]
         self.min_bound = [float(x) for x in np.fromstring(self.indict["LBL"], sep=",")]
 
-    def _get_space_var(self) -> list:
+    def read_input_file(self):
+        if self.indict["init_data_sampling"] != "LHSEQ":
+            with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
+                self.data_points = np.genfromtxt(f, delimiter=",")
+                # Remove headers
+                if np.all(np.isnan(self.data_points[0])):
+                    self.data_points = self.data_points[1:, :]
+
+                self.data_points = self.data_points.astype("float64")
+                # Remove last column of 0/1
+                self.data_points = self.data_points[:, :-1]
+                self.data_point_size = len(self.data_points)
+        elif self.indict["init_data_sampling"] == "LHSEQ":
+            self.data_point_size = None
+
+    def _get_space_var(self):
         """
         Returns:
             Space variable bounderies (min, max values) for each data vector.
@@ -79,29 +88,27 @@ class ChemSPX:
 
         return space_variables
 
-    def _get_initial_fx(self, points: list) -> None:
-        """
-        Args:
-            ...
-        Returns:
-            ...
-        """
+    def _get_initial_fx(self, sampled_points: list) -> None:
 
         if int(self.indict["n_processes"]) == 1:
-            for i, point in enumerate(points):
-                fx = EvaluationFunction(self.train_data, self.indict).f_x(point)
+            for i, point in enumerate(sampled_points):
+                fx = EvaluationFunction(self.data_points, self.indict).f_x(point)
                 self.fx1[i] = fx
         elif int(self.indict["n_processes"]) > 1:
 
             pool = Pool(processes=int(self.indict["n_processes"]))
-            results = pool.map(EvaluationFunction(self.train_data, self.indict).f_x, points)
+            results = pool.map(
+                EvaluationFunction(self.data_points, self.indict).f_x, sampled_points
+            )
             for i in range(len(results)):
                 self.fx1[i] = results[i]
             pool.close()
             pool.join()
         elif int(self.indict["n_processes"]) == -1:
             pool = Pool(processes=os.cpu_count())
-            results = pool.map(EvaluationFunction(self.train_data, self.indict).f_x, points)
+            results = pool.map(
+                EvaluationFunction(self.data_points, self.indict).f_x, sampled_points
+            )
             for i in range(len(results)):
                 self.fx1[i] = results[i]
             pool.close()
@@ -142,7 +149,7 @@ class ChemSPX:
 
         points = self._generate_grid_coordinates(float(self.indict["map_grid_size"]))
 
-        function = EvaluationFunction(self.train_data, self.indict)
+        function = EvaluationFunction(self.data_points, self.indict)
 
         # Compute fx values of grid points in parallel
         pool = Pool(int(self.indict["n_processes"]))
@@ -202,8 +209,8 @@ class ChemSPX:
     def _print_data_table(self) -> None:
 
         print("\n")
-        for i in range(len(self.train_data)):
-            print(f"  {i} {self.train_data[i][:]}")
+        for i in range(len(self.data_points)):
+            print(f"  {i} {self.data_points[i][:]}")
         print("\n")
 
     def _initial_sampling(self) -> None:
@@ -227,11 +234,11 @@ class ChemSPX:
                 xlimits=variable_bounderies, random_state=self.indict["random_seed"]
             )
             points = sampling(int(self.indict["sample_number"]))
-            self.train_data = points
+            self.data_points = points
 
         elif self.indict["init_data_sampling"] == "void":
             # VOID exploration algorithm
-            sampling = VOID(self.indict, self.train_data)
+            sampling = VOID(self.indict, self.data_points)
             points = sampling.search()
 
         elif self.indict["init_data_sampling"] == "restart":
@@ -267,7 +274,7 @@ class ChemSPX:
             self.indict["map_function"] == "False"
             and self.indict["init_data_sampling"] != "LHSEQ"
         ):
-            self.train_data = np.vstack((self.train_data, points))
+            self.data_points = np.vstack((self.data_points, points))
 
         self._get_initial_fx(points)
 
@@ -285,14 +292,14 @@ class ChemSPX:
         Comment
         """
         if self.indict["init_data_sampling"] == "LHSEQ":
-            self.train_size = 0
+            self.data_point_size = 0
 
-        for itt in range(int(self.indict["iteration_num"])):
+        for iteration in range(int(self.indict["iteration_num"])):
             start_time_loop = time.time()
 
             for ix in range(int(self.indict["sample_number"])):
-                point_idx = ix + self.train_size
-                point = self.train_data[point_idx]
+                point_idx = ix + self.data_point_size
+                point = self.data_points[point_idx]
 
                 # print(np.where(self.train_data == point))
 
@@ -300,21 +307,21 @@ class ChemSPX:
                 point_bounderies = Space(self.indict)._sub_space_xi(point, self.xi)
 
                 if self.indict["OPT_method"] == "GA":
-                    optimised_point_dict = CSPX_GA(self.indict, self.train_data).run_GA(
-                        point_bounderies
-                    )
+                    optimised_point_dict = CSPX_GA(
+                        self.indict, self.data_points
+                    ).run_GA(point_bounderies)
                     optimised_point = optimised_point_dict["variable"]
                     f_x = optimised_point_dict["score"]
 
                 elif self.indict["OPT_method"] == "GRID":
-                    optimised = CSPX_GRID(self.indict, self.train_data).run_cspx_grid(
+                    optimised = CSPX_GRID(self.indict, self.data_points).run_cspx_grid(
                         point_bounderies
                     )
                     optimised_point = optimised[0]
                     f_x = optimised[1]
 
                 elif self.indict["OPT_method"] == "BO":
-                    optimised = CSPX_BO(self.indict, self.train_data).run_bayesian(
+                    optimised = CSPX_BO(self.indict, self.data_points).run_bayesian(
                         point_bounderies
                     )
                     optimised_point = optimised[0]
@@ -329,7 +336,7 @@ class ChemSPX:
                 self.vect_change[ix] = self._get_vect_change(x1, x2)
 
                 self.fx2[ix] = f_x
-                self.train_data[point_idx] = optimised_point
+                self.data_points[point_idx] = optimised_point
 
             # self._print_data_table()
 
@@ -346,11 +353,11 @@ class ChemSPX:
             der_fx = self.der_fx1 - self.der_fx2
             self.der_fx1 = self.der_fx2
 
-            if itt == 0:
+            if iteration == 0:
                 der_fx = 0
 
             _print_loop_info(
-                itt + 1,
+                iteration + 1,
                 self.av_fx,
                 self.av_del_fx,
                 self.del_vector,
@@ -361,23 +368,19 @@ class ChemSPX:
             self.fx1 = self.fx2
             self.fx2 = np.zeros(int(self.indict["sample_number"]))
 
-            if (itt + 1) % int(self.indict["write_f_every"]) == 0:
+            if (iteration + 1) % int(self.indict["write_f_every"]) == 0:
 
                 np.savetxt(
-                    f'{self.indict["out_dir"]}/iteration_{itt+1}.csv',
-                    self.train_data[self.train_size : len(self.train_data)],
+                    f'{self.indict["out_dir"]}/iteration_{iteration+1}.csv',
+                    self.data_points[self.data_point_size : len(self.data_points)],
                     delimiter=",",
                 )
-
-                # PCA reduction
-                if self.indict["PCA"] == "True":
-                    PCA(f'{self.indict["out_dir"]}/iteration_{itt+1}.csv').reduce()
 
             # Writes out stats data:
             # Average derrivative of f(x), average of f(x), 2nd derrivative of average of f(x), std of average f(x), and loop time
             # ---------------------------  ---------------  ---------------   ----------------  -------------------      ---------
 
-            if itt == 0:
+            if iteration == 0:
                 fx_header = np.array(
                     [
                         [
@@ -394,7 +397,7 @@ class ChemSPX:
                 fx_data = np.array(
                     [
                         [
-                            itt + 1,
+                            iteration + 1,
                             self.av_fx,
                             self.av_del_fx,
                             der_fx,
@@ -414,7 +417,7 @@ class ChemSPX:
                 fx_data = np.array(
                     [
                         [
-                            itt + 1,
+                            iteration + 1,
                             self.av_fx,
                             self.av_del_fx,
                             der_fx,
@@ -427,7 +430,7 @@ class ChemSPX:
                 f = open(f'{self.indict["out_dir"]}/fx_data.csv', "a")
                 np.savetxt(f, fx_data, delimiter=",")
                 f.close()
-            if (itt + 1) % int(self.indict["check_conv_every"]) == 0:
+            if (iteration + 1) % int(self.indict["check_conv_every"]) == 0:
                 convergence = self._check_convergence()
                 if convergence != 0:
                     pass
