@@ -9,7 +9,7 @@ class InputParser:
         """
 
         self.input = inptfle
-        self.dict = {}
+        self.indict = {}
         self.default = {
             "print_parameters": "False",
             "init_data_sampling": "LHS",
@@ -61,28 +61,28 @@ class InputParser:
 
         try:
             for key in important:
-                if key not in self.dict:
+                if key not in self.indict:
                     print(f"ERROR: {key} mus be defined in program input file!")
                     raise SystemExit
-        except:
+        except KeyError:
             raise SystemExit
 
         for key, value in self.default.items():
-            if key not in self.dict:
-                self.dict[key] = value
+            if key not in self.indict:
+                self.indict[key] = value
 
         # Corrects true/false infut
-        for key, value in self.dict.items():
+        for key, value in self.indict.items():
             if value == "true" or value == "t" or value == "T":
-                self.dict[key] = "True"
+                self.indict[key] = "True"
             elif value == "false" or value == "f" or value == "F":
-                self.dict[key] = "False"
+                self.indict[key] = "False"
 
         self._check_input_ref_fle()
 
     def get(self) -> dict:
 
-        if type(self.input) == str:
+        if isinstance(self.input, str):
 
             f = open(self.input, "r")
 
@@ -93,31 +93,45 @@ class InputParser:
                         val = line.split(" ", 1)[1].strip()
                         if "#" in val:
                             val = val.split("#", 1)[0].strip()
-                        self.dict[key] = val
+                        self.indict[key] = val
 
         elif type(self.input) == dict:
             for key, element in self.input.items():
-                self.dict[key] = element
+                self.indict[key] = element
 
         else:
             print("ERROR: Could not parse input file. Use .csv file.")
             raise SystemExit
         self._check_indict()
 
-        return self.dict
+        return self.indict
+    
+    def read_input_file(self):
+        if self.indict["init_data_sampling"] != "LHSEQ":
+            with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
+                self.data_points = np.genfromtxt(f, delimiter=",")
+                # Remove headers
+                
+                if np.all(np.isnan(self.data_points[0])):
+                    self.data_points = self.data_points[1:, :]
+
+                self.data_points = self.data_points.astype("float64")
+
+        elif self.indict["init_data_sampling"] == "LHSEQ":
+            self.data_points = None
 
     def _check_input_ref_fle(self):
-        with open(self.dict["in_file"], "r", encoding="utf-8-sig") as f:
-            train_data = np.genfromtxt(f, delimiter=",", dtype=float)
+        
+        self.read_input_file()
 
-        if np.isnan(np.sum(train_data)):
+        if np.isnan(np.sum(self.data_points)):
             print("ERROR: Referece data input contains NaN values!")
 
-        if np.all((train_data[:, -1] == 0) | (train_data[:, -1] == 1)) is False:
+        if np.all((self.data_points[:, -1] == 0) | (self.data_points[:, -1] == 1)) is False:
             print(
                 "ERROR: Last column in the reference data file must contain 0 or 1 values!"
             )
-        
+
             raise SystemExit
 
 
