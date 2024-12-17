@@ -10,7 +10,7 @@ from smt.sampling_methods import LHS
 from ChemSPX.printing import _print_void_info
 from skopt import gp_minimize
 from scipy.spatial.distance import cdist
-import math
+
 
 class Function:
     def __init__(self, train_data, indict):
@@ -48,28 +48,8 @@ class Function:
         F_av = np.average(F)
         return F_av
 
-    def _get_radius(self, x):
-        _xi = x * float(self.indict["xi"])
-        x2 = _xi + x
-        r2 = x2 - x
-        r = math.squrt(r2)
-        return r
-
     def _dist(x, y) -> float:
         return np.sqrt(np.sum((x - y) ** 2))
-
-    def _pf_bd(self, x, pF):
-        #      !NOT IN USE!
-        # Pseudo-force baundary condition corrections
-        # Calclulates pFCU and pFCL
-
-        upper_bound = self._dist(x, self.max_bound)
-        lower_bound = self._dist(x, self.min_bound)
-
-        pFCU = 1 / (upper_bound ** float(self.indict["BD_power"]))
-        pFCL = 1 / (lower_bound ** float(self.indict["BD_power"]))
-
-        return pF + pFCU + pFCL
 
     def f_x(self, X) -> float:
 
@@ -111,9 +91,6 @@ class Function:
             dist = np.delete(dist, 0)
             idx = np.delete(idx, 0)
             return self._get_cos(idx, X)
-
-        elif self.indict["f(x)"] == "external":
-            return self._run_external(X)
         else:
             print("ERROR: WRONG f(x) keyword!")
             raise SystemExit
@@ -225,15 +202,15 @@ class CSPX_BO(Function):
             metric=self.indict["metric"],
         )
 
-    def run_bayassian(self, variable_boundaries):
+    def run_bayesian(self, variable_boundaries):
         # Correction for boundary conditions as pg_minimize requires [(min, max),...]
         # hence for case min==max 1e-100 is added to max
-        for i, j in enumerate(variable_boundaries):
+        for i, _ in enumerate(variable_boundaries):
             if variable_boundaries[i][1] == variable_boundaries[i][0]:
                 variable_boundaries[i][1] = variable_boundaries[i][1] + 1e-100
         bounds = []
 
-        for i, j in enumerate(variable_boundaries):
+        for i, _ in enumerate(variable_boundaries):
             bounds.append((variable_boundaries[i][0], variable_boundaries[i][1]))
 
         res = gp_minimize(
@@ -260,7 +237,7 @@ class Space:
         self.max_bound = np.fromstring(self.indict["UBL"], sep=",")
         self.min_bound = np.fromstring(self.indict["LBL"], sep=",")
 
-    def _boudary_conditions(self, X):
+    def _boundary_conditions(self, X):
         """
             Correcting for boundary conditions
         !There might be problems with negative numbers!
@@ -322,7 +299,7 @@ class Space:
 
         # Apply correction for boundary conditions
 
-        two_by_n = self._boudary_conditions(two_by_n)
+        two_by_n = self._boundary_conditions(two_by_n)
 
         return two_by_n
 
@@ -342,11 +319,11 @@ class Space:
     def sub_space_C(self):
         min_max = []
 
-        u = self.indict["U"]
-        l = self.indict["L"]
+        upper = self.indict["U"]
+        lower = self.indict["L"]
 
-        max_val = np.fromstring(u, sep=",")
-        min_val = np.fromstring(l, sep=",")
+        max_val = np.fromstring(upper, sep=",")
+        min_val = np.fromstring(lower, sep=",")
 
         two_by_n = np.vstack((min_val, max_val)).T
 
@@ -360,7 +337,6 @@ class Space:
 
         plus_xi = []
         minus_xi = []
-        min_max = []
         two_by_n = np.zeros((len(data_point), 2))
 
         for i in range(len(data_point)):
@@ -379,7 +355,7 @@ class Space:
             two_by_n[i] = np.vstack((x, y)).T
 
         # Apply correction for boundary conditions
-        two_by_n = self._boudary_conditions(two_by_n)
+        two_by_n = self._boundary_conditions(two_by_n)
 
         return two_by_n
 
@@ -409,8 +385,8 @@ class VOID(CSPX_GA, Space):
             leaf_size=int(self.indict["leaf_size"]),
             metric=self.indict["metric"],
         )
-        n_neighbours = tree.query_radius(X, r=self.indict["r"], count_only=True)
-        return n_neighbours[0]
+        n_neighbors = tree.query_radius(X, r=self.indict["r"], count_only=True)
+        return n_neighbors[0]
 
     def search(self):
         points = np.zeros((int(self.indict["sample_number"]), len(self.max_bound)))
