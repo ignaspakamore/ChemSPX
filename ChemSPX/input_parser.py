@@ -105,13 +105,13 @@ class InputParser:
         self._check_indict()
 
         return self.indict
-    
+
     def read_input_file(self):
         if self.indict["init_data_sampling"] != "LHSEQ":
             with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
                 self.data_points = np.genfromtxt(f, delimiter=",")
                 # Remove headers
-                
+
                 if np.all(np.isnan(self.data_points[0])):
                     self.data_points = self.data_points[1:, :]
 
@@ -121,13 +121,16 @@ class InputParser:
             self.data_points = None
 
     def _check_input_ref_fle(self):
-        
+
         self.read_input_file()
 
         if np.isnan(np.sum(self.data_points)):
             print("ERROR: Referece data input contains NaN values!")
 
-        if np.all((self.data_points[:, -1] == 0) | (self.data_points[:, -1] == 1)) is False:
+        if (
+            np.all((self.data_points[:, -1] == 0) | (self.data_points[:, -1] == 1))
+            is False
+        ):
             print(
                 "ERROR: Last column in the reference data file must contain 0 or 1 values!"
             )
