@@ -38,6 +38,7 @@ class InputParser:
             "ploop": "False",
             "PCA": "False",
             "pca_n_components": 2,
+            "f(x)":"Force"
         }
 
     def _check_indict(self):
@@ -56,7 +57,6 @@ class InputParser:
             "iteration_num",
             "method",
             "xi",
-            "f(x)",
         ]
 
         try:

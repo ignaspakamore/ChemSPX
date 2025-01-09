@@ -130,7 +130,7 @@ class CSPX_GA(EvaluationFunction):
 
         model.run(
             set_function=ga.set_function_multiprocess(
-                fx, n_jobs=int(self.indict["n_processes"])
+                self.f_x, n_jobs=int(self.indict["n_processes"])
             ),
             no_plot=True,
             progress_bar_stream=None,
