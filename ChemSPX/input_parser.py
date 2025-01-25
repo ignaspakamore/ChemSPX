@@ -62,7 +62,7 @@ class InputParser:
         try:
             for key in important:
                 if key not in self.indict:
-                    print(f"ERROR: {key} mus be defined in program input file!")
+                    print(f"ERROR: {key} must be defined in program input file!")
                     raise SystemExit
         except KeyError:
             raise SystemExit
