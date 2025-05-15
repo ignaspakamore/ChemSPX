@@ -91,6 +91,15 @@ class EvaluationFunction:
             dist = np.delete(dist, 0)
             idx = np.delete(idx, 0)
             return self._get_cos(idx, X)
+        elif self.indict["f(x)"] == "BallTree_void":
+            X = X.reshape(1, len(X))
+            tree = BallTree(
+                self.train_data,
+                leaf_size=int(self.indict["leaf_size"]),
+                metric=self.indict["metric"],
+            )
+            n_neighbors = tree.query_radius(X, r=self.indict["r"], count_only=True)
+            return n_neighbors[0]
         else:
             print("ERROR: WRONG f(x) keyword!")
             raise SystemExit
@@ -391,23 +400,13 @@ class VOID(CSPX_GA, Space):
         self.f_x_radius_values = np.zeros(int(self.indict["sample_number"]))
         self.f_x_distances_values = np.zeros(int(self.indict["sample_number"]))
 
-    def f_x_radius(self, X):
-        X = X.reshape(1, len(X))
-        tree = BallTree(
-            self.train_data,
-            leaf_size=int(self.indict["leaf_size"]),
-            metric=self.indict["metric"],
-        )
-        n_neighbors = tree.query_radius(X, r=self.indict["r"], count_only=True)
-        return n_neighbors[0]
-
     def search(self):
         points = np.zeros((int(self.indict["sample_number"]), len(self.max_bound)))
 
         for i in range(int(self.indict["sample_number"])):
             start_time = time.time()
 
-            optimised_point_dict = self.run_GA(self.points, self.f_x_radius)
+            optimised_point_dict = self.run_GA(self.points)
             points[i] = optimised_point_dict["variable"]
 
             self.train_data = np.vstack(
