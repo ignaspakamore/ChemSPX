@@ -20,6 +20,8 @@ setup(
         "smt==2.7.0",
         "scikit-optimize==0.9",
         "geneticalgorithm2==6.9.2",
+        "ipython==9.2.0",
+        "ipykernel==6.29.5"
     ],
     packages=["ChemSPX"],
     entry_points={
