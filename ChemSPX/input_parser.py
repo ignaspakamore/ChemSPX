@@ -14,31 +14,39 @@ class InputParser:
             "print_parameters": "False",
             "init_data_sampling": "LHS",
             "out_dir": "OUT",
+            
             "metric": "euclidean",
             "GRID_sample_number": 1000,
             "leaf_size": 20,
+
+            # GA optimiser parameters
+            "OPT_method": "GA",
             "mut_prob": 0.1,
             "cross_prob": 0.5,
             "parent_po": 0.3,
             "elit_ratio": 0.01,
+            "split_value": 0.1,
             "crossover_type": "uniform",
+            "max_iteration_without_improv": 50,
+
             "n_processes": 1,
             "write_f_every": 1,
-            "split_value": 0.1,
-            "max_iteration_without_improv": 50,
+
+
             "print_every": 1,
+            "verbose": 1,
+            "random_seed": 45, 
+
             "write_initial": "False",
             "map_function": "False",
-            "random_seed": None,
             "check_conv_every": 10,
             "power": 1,
             "k": "all",
             "h": 0.1,
-            "verbose": 1,
-            "ploop": "False",
             "PCA": "False",
             "pca_n_components": 2,
-            "f(x)":"Force"
+            "f(x)":"Force",
+
         }
 
     def _check_indict(self):
@@ -48,7 +56,6 @@ class InputParser:
         """
 
         important = [
-            "OPT_method",
             "init_data_sampling",
             "Apply_BD",
             "UBL",
@@ -62,7 +69,7 @@ class InputParser:
         try:
             for key in important:
                 if key not in self.indict:
-                    print(f"ERROR: {key} must be defined in program input file!")
+                    print(f"ERROR: {key} must be defined in program input fil!")
                     raise SystemExit
         except KeyError:
             raise SystemExit
@@ -71,11 +78,11 @@ class InputParser:
             if key not in self.indict:
                 self.indict[key] = value
 
-        # Corrects true/false infut
+        # Corrects true/false input
         for key, value in self.indict.items():
-            if value == "true" or value == "t" or value == "T":
+            if value == "true" or value == "t" or value == "T" or (type(value) == bool and value == True):
                 self.indict[key] = "True"
-            elif value == "false" or value == "f" or value == "F":
+            elif value == "false" or value == "f" or value == "F" or (type(value) == bool and value == False):
                 self.indict[key] = "False"
 
         self._check_input_ref_fle()
@@ -108,15 +115,19 @@ class InputParser:
 
     def read_input_file(self):
         if self.indict["init_data_sampling"] != "LHSEQ":
-            with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
-                self.data_points = np.genfromtxt(f, delimiter=",")
-                # Remove headers
+            try:
+                with open(self.indict["in_file"], "r", encoding="utf-8-sig") as f:
+                    self.data_points = np.genfromtxt(f, delimiter=",")
+                    # Remove headers
 
-                if np.all(np.isnan(self.data_points[0])):
-                    self.data_points = self.data_points[1:, :]
+                    if np.all(np.isnan(self.data_points[0])):
+                        self.data_points = self.data_points[1:, :]
 
-                self.data_points = self.data_points.astype("float64")
-
+                    self.data_points = self.data_points.astype("float64")
+            except FileNotFoundError:
+                print(f"ERROR: {self.indict["in_file"]} file was not found.")
+                raise SystemExit
+                
         elif self.indict["init_data_sampling"] == "LHSEQ":
             self.data_points = None
 
