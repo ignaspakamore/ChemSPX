@@ -56,12 +56,14 @@ pip install .
 
 # Getting started 
 
-After instalation the code can be execute by calling:
+After instalation the code can be execute by calling the following command in the terminal. 
 
 ```
 chemspx input.txt
 ```
-in the terminal. 
+
+Alternatively, jupyter notebooks can be used to execute the code. 
+
 
 The input file contains program execution instruction. 
 Example input can be found in examples/ directory. 
