@@ -1,6 +1,13 @@
 
 # ChemSPX 
 
+```
+  _____  _     _  ______ _______      _______  _____  _     _
+ |       |_____| |______ |  |  |      |______ |_____]  \___/ 
+ |_____  |     | |______ |  |  |      ______| |       _/   \_
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_  
+```
+
 A toolkit for sampling and analysis of reaction and formulation design parameter spaces. 
 
 ## Features
