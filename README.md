@@ -22,7 +22,7 @@ A toolkit for sampling and analysis of reaction and formulation design parameter
 
 ChemSPX requires **python 3.12**. 
 
-Tested on **macOS Sonoma Version 14.0** and **Ubuntu 22.04.4 LTS***. Conda version 24.7.1.
+Tested on **macOS Sonoma Version 14.0** and **Ubuntu 22.04.4 LTS**. Conda version 24.7.1.
 
 1. Clone the repository.
 
